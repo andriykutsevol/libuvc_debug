@@ -359,7 +359,7 @@ uvc_error_t uvc_open(
 
   //ret = libusb_open(dev->usb_dev, &usb_devh);
 
-  usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0825);
+  usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0881);
 	if (!usb_devh) {
 		dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
 	}
