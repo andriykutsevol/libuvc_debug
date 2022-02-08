@@ -145,7 +145,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
       uvc_free_frame(bgr);
       return;
     }
-    write(fdnum_bgr, bgr->data, bgr->data_bytes);
+    //write(fdnum_bgr, bgr->data, bgr->data_bytes);
     break;
   default:
     break;
