@@ -357,13 +357,12 @@ uvc_error_t uvc_open(
   dgnetP_deviceC("device.c ::: uvc_open() ::: dev->ref: %d \n", dev->ref);
 
 
-  //ret = libusb_open(dev->usb_dev, &usb_devh);
+  ret = libusb_open(dev->usb_dev, &usb_devh);
 
-  usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0825);
-
-	if (!usb_devh) {
-		dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
-	}
+  //usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0825);
+	// if (!usb_devh) {
+	// 	dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
+	// }
 
   //dgnetP_deviceC("device.c ::: uvc_open() ::: usb_devh->dev->bus_number: %d \n", usb_devh->claimed_interfaces);
 
