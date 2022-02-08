@@ -345,6 +345,7 @@ uvc_error_t uvc_wrap(
  * @param[out] devh Handle on opened device
  * @return Error opening device or SUCCESS
  */
+
 uvc_error_t uvc_open(
     uvc_device_t *dev,
     uvc_device_handle_t **devh) {
@@ -353,19 +354,7 @@ uvc_error_t uvc_open(
 
   UVC_ENTER();
 
-
-  dgnetP_deviceC("device.c ::: uvc_open() ::: dev->ref: %d \n", dev->ref);
-
-
-  //ret = libusb_open(dev->usb_dev, &usb_devh);
-
-  usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0881);
-	if (!usb_devh) {
-		dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
-	}
-
-  //dgnetP_deviceC("device.c ::: uvc_open() ::: usb_devh->dev->bus_number: %d \n", usb_devh->claimed_interfaces);
-
+  ret = libusb_open(dev->usb_dev, &usb_devh);
   UVC_DEBUG("libusb_open() = %d", ret);
 
   if (ret != UVC_SUCCESS) {
@@ -376,8 +365,41 @@ uvc_error_t uvc_open(
   ret = uvc_open_internal(dev, usb_devh, devh);
   UVC_EXIT(ret);
   return ret;
-
 }
+
+// uvc_error_t uvc_open(
+//     uvc_device_t *dev,
+//     uvc_device_handle_t **devh) {
+//   uvc_error_t ret;
+//   struct libusb_device_handle *usb_devh;
+
+//   UVC_ENTER();
+
+
+//   dgnetP_deviceC("device.c ::: uvc_open() ::: dev->ref: %d \n", dev->ref);
+
+
+//   //ret = libusb_open(dev->usb_dev, &usb_devh);
+
+//   usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0881);
+// 	if (!usb_devh) {
+// 		dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
+// 	}
+
+//   //dgnetP_deviceC("device.c ::: uvc_open() ::: usb_devh->dev->bus_number: %d \n", usb_devh->claimed_interfaces);
+
+//   UVC_DEBUG("libusb_open() = %d", ret);
+
+//   if (ret != UVC_SUCCESS) {
+//     UVC_EXIT(ret);
+//     return ret;
+//   }
+
+//   ret = uvc_open_internal(dev, usb_devh, devh);
+//   UVC_EXIT(ret);
+//   return ret;
+
+// }
 
 static uvc_error_t uvc_open_internal(
     uvc_device_t *dev,
