@@ -52,7 +52,7 @@ void dgnetP_streamC(char *format, ...){
     va_end(args);  
     fclose(pFile);
 }
-//dgnetP_sreamC("stream.c ::: function_name() ::: %s \n", "message");
+//dgnetP_streamC("stream.c ::: function_name() ::: %s \n", "message");
 
 
 #ifdef _MSC_VER
@@ -284,11 +284,11 @@ uvc_error_t uvc_query_stream_ctrl(
 
     /* fix up block for cameras that fail to set dwMax* */
     if (ctrl->dwMaxVideoFrameSize == 0) {
-      dgnetP_sreamC("stream.c ::: uvc_query_stream_ctrl() ::: %s \n", "fix up block for cameras that fail to set dwMax*");
+      dgnetP_streamC("stream.c ::: uvc_query_stream_ctrl() ::: %s \n", "fix up block for cameras that fail to set dwMax*");
       uvc_frame_desc_t *frame = uvc_find_frame_desc(devh, ctrl->bFormatIndex, ctrl->bFrameIndex);
 
       if (frame) {
-        dgnetP_sreamC("stream.c ::: uvc_query_stream_ctrl() ::: %s \n", "fix up block for cameras that fail to set dwMax* ::: IF FRAME");
+        dgnetP_streamC("stream.c ::: uvc_query_stream_ctrl() ::: %s \n", "fix up block for cameras that fail to set dwMax* ::: IF FRAME");
         ctrl->dwMaxVideoFrameSize = frame->dwMaxVideoFrameBufferSize;
       }
     }
