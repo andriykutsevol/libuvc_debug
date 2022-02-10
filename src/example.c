@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
       frame_desc = frame_desc->next;  // 320x180
       frame_desc = frame_desc->next;  // 320x240
       frame_desc = frame_desc->next;  // 352x288
-      // frame_desc = frame_desc->next;  // 480x270
+      frame_desc = frame_desc->next;  // 480x270
       // frame_desc = frame_desc->next;  // 640x360
       // frame_desc = frame_desc->next;  // 800x448
       // frame_desc = frame_desc->next;  // 800x600
