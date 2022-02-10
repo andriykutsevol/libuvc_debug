@@ -715,6 +715,9 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
   uint8_t header_info;
   size_t data_len;
 
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "0");
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: payload_len: %d \n", payload_len);
+
   /* magic numbers for identifying header packets from some iSight cameras */
   static uint8_t isight_tag[] = {
     0x11, 0x22, 0x33, 0x44,
@@ -803,6 +806,8 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
       _uvc_swap_buffers(strmh);
     }
   }
+
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "999");
 }
 
 /** @internal
@@ -816,16 +821,21 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
 void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
   uvc_stream_handle_t *strmh = transfer->user_data;
 
+  dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
+
   int resubmit = 1;
 
   switch (transfer->status) {
   case LIBUSB_TRANSFER_COMPLETED:
+    dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "LIBUSB_TRANSFER_COMPLETED");
     if (transfer->num_iso_packets == 0) {
       /* This is a bulk mode transfer, so it just has one payload transfer */
       _uvc_process_payload(strmh, transfer->buffer, transfer->actual_length);
     } else {
       /* This is an isochronous mode transfer, so each packet has a payload transfer */
       int packet_id;
+
+      dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "This is an isochronous mode transfer, so each packet has a payload transfer");
 
       for (packet_id = 0; packet_id < transfer->num_iso_packets; ++packet_id) {
         uint8_t *pktbuf;
@@ -834,10 +844,12 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
         pkt = transfer->iso_packet_desc + packet_id;
 
         if (pkt->status != 0) {
+          dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: BAD packet (isochronous transfer); status: %d", pkt->status);
           UVC_DEBUG("bad packet (isochronous transfer); status: %d", pkt->status);
           continue;
         }
 
+        dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "(libusb_get_iso_packet_buffer_simple() !!!!!");
         pktbuf = libusb_get_iso_packet_buffer_simple(transfer, packet_id);
 
         _uvc_process_payload(strmh, pktbuf, pkt->actual_length);
@@ -927,6 +939,8 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
       pthread_mutex_unlock(&strmh->cb_mutex);
     }
   }
+
+  dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
 }
 
 /** Begin streaming video from the camera into the callback function.
@@ -1386,6 +1400,7 @@ uvc_error_t uvc_stream_start(
     }
   }
 
+  dgnetP_streamC("stream.c ::: uvc_stream_start() ::: strmh->user_cb = cb; \n");
   strmh->user_cb = cb;
   strmh->user_ptr = user_ptr;
 
@@ -1393,7 +1408,7 @@ uvc_error_t uvc_stream_start(
    * with the contents of each frame.
    */
   if (cb) {
-    dgnetP_streamC("stream.c ::: uvc_stream_start() ::: !!! cb pthread_create \n");
+    dgnetP_streamC("stream.c ::: uvc_stream_start() ::: pthread_create(&strmh->cb_thread, NULL, _uvc_user_caller, (void*) strmh); \n");
     pthread_create(&strmh->cb_thread, NULL, _uvc_user_caller, (void*) strmh);
   }
 
@@ -1451,6 +1466,9 @@ uvc_error_t uvc_stream_start_iso(
  * @param arg Device handle
  */
 void *_uvc_user_caller(void *arg) {
+
+  dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "0");
+
   uvc_stream_handle_t *strmh = (uvc_stream_handle_t *) arg;
 
   uint32_t last_seq = 0;
@@ -1468,12 +1486,16 @@ void *_uvc_user_caller(void *arg) {
     }
     
     last_seq = strmh->hold_seq;
+    dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "_uvc_populate_frame(strmh);");
     _uvc_populate_frame(strmh);
     
     pthread_mutex_unlock(&strmh->cb_mutex);
     
+    dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
     strmh->user_cb(&strmh->frame, strmh->user_ptr);
   } while(1);
+
+  dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "999");
 
   return NULL; // return value ignored
 }
@@ -1485,6 +1507,8 @@ void *_uvc_user_caller(void *arg) {
 void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   uvc_frame_t *frame = &strmh->frame;
   uvc_frame_desc_t *frame_desc;
+
+  dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
 
   /** @todo this stuff that hits the main config cache should really happen
    * in start() so that only one thread hits these data. all of this stuff
@@ -1539,6 +1563,8 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
       frame->metadata_bytes = strmh->meta_hold_bytes;
       memcpy(frame->metadata, strmh->meta_holdbuf, frame->metadata_bytes);
   }
+
+  gnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 }
 
 /** Poll for a frame
