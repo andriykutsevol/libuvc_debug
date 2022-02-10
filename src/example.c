@@ -251,6 +251,25 @@ int main(int argc, char **argv) {
 
       const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
       const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;
+
+      //frame_desc = frame_desc->next;  // Size: Discrete 640x480
+      frame_desc = frame_desc->next;  // Size: Discrete 160x120
+      frame_desc = frame_desc->next;  // Size: Discrete 176x144
+      frame_desc = frame_desc->next;  // Size: Discrete 320x180
+      frame_desc = frame_desc->next;  // Size: Discrete 320x240
+      frame_desc = frame_desc->next;  // Size: Discrete 352x288
+      frame_desc = frame_desc->next;  // Size: Discrete 480x270
+      frame_desc = frame_desc->next;  // Size: Discrete 640x360
+      frame_desc = frame_desc->next;  // Size: Discrete 800x448
+      frame_desc = frame_desc->next;  // Size: Discrete 800x600
+      frame_desc = frame_desc->next;  // Size: Discrete 848x480
+      frame_desc = frame_desc->next;  // Size: Discrete 960x540
+      frame_desc = frame_desc->next;  // Size: Discrete 1024x576
+      frame_desc = frame_desc->next;  // Size: Discrete 1280x720
+      frame_desc = frame_desc->next;  // Size: Discrete 1600x896
+      frame_desc = frame_desc->next;  // Size: Discrete 1920x1080
+
+
       enum uvc_frame_format frame_format;
       int width = 640;
       int height = 480;
