@@ -1564,7 +1564,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
       memcpy(frame->metadata, strmh->meta_holdbuf, frame->metadata_bytes);
   }
 
-  gnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
+  dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 }
 
 /** Poll for a frame
