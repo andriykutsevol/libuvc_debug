@@ -270,11 +270,11 @@ int main(int argc, char **argv) {
       // frame_desc = frame_desc->next;  // 1920x1080
 
       // Mine
-      // frame_desc = frame_desc->next; // 160x120
-      // frame_desc = frame_desc->next; // 176x144
-      // frame_desc = frame_desc->next; // 320x176
-      // frame_desc = frame_desc->next; // 320x240
-      // frame_desc = frame_desc->next; // 352x288
+      frame_desc = frame_desc->next; // 160x120
+      frame_desc = frame_desc->next; // 176x144
+      frame_desc = frame_desc->next; // 320x176
+      frame_desc = frame_desc->next; // 320x240
+      frame_desc = frame_desc->next; // 352x288
       // frame_desc = frame_desc->next; // 432x240
       // frame_desc = frame_desc->next; // 544x288
       // frame_desc = frame_desc->next; // 640x360
