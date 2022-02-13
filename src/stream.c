@@ -1419,6 +1419,7 @@ uvc_error_t uvc_stream_start(
     dgnetP_streamC("stream.c ::: uvc_stream_start() ::: transfer_id: %d \n", transfer_id);    
     ret = libusb_submit_transfer(strmh->transfers[transfer_id]);
     if (ret != UVC_SUCCESS) {
+      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: libusb_submit_transfer failed: %d \n", ret);
       UVC_DEBUG("libusb_submit_transfer failed: %d",ret);
       break;
     }
@@ -1426,6 +1427,7 @@ uvc_error_t uvc_stream_start(
 
   if ( ret != UVC_SUCCESS && transfer_id >= 0 ) {
     for ( ; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; transfer_id++) {
+      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: libusb_free_transfer ( strmh->transfers[%d] ) \n", transfer_id);
       free ( strmh->transfers[transfer_id]->buffer );
       libusb_free_transfer ( strmh->transfers[transfer_id]);
       strmh->transfers[transfer_id] = 0;
