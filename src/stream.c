@@ -1366,15 +1366,15 @@ uvc_error_t uvc_stream_start(
     
       dgnetP_streamC("stream.c ::: uvc_stream_start() ::: -----------Set up the transfers-----------\n");
 
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: packets_per_transfer : %d \n", packets_per_transfer);
-
       transfer = libusb_alloc_transfer(packets_per_transfer);
       strmh->transfers[transfer_id] = transfer;      
       strmh->transfer_bufs[transfer_id] = malloc(total_transfer_size);
 
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: ibusb_fill_iso_transfer() CALL \n");
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: transfer_id : %d \n",         transfer_id);
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: total_transfer_size : %d \n", total_transfer_size);
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: ibusb_fill_iso_transfer() CALL \n");
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: transfer_id : %d \n",         transfer_id);
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: total_transfer_size : %d \n", total_transfer_size);
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: packets_per_transfer : %d \n", packets_per_transfer);
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: bDefaultFrameIndex : %d \n", bDefaultFrameIndex);
 
       libusb_fill_iso_transfer(
         transfer, strmh->devh->usb_devh, format_desc->parent->bEndpointAddress,
