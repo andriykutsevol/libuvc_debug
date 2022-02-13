@@ -1374,7 +1374,7 @@ uvc_error_t uvc_stream_start(
       dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: transfer_id : %d \n",         transfer_id);
       dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: total_transfer_size : %d \n", total_transfer_size);
       dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: packets_per_transfer : %d \n", packets_per_transfer);
-      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: bDefaultFrameIndex : %d \n", bDefaultFrameIndex);
+      dgnetP_streamC("!!! stream.c ::: uvc_stream_start() ::: format_desc->bDefaultFrameIndex : %d \n", format_desc->bDefaultFrameIndex);
 
       libusb_fill_iso_transfer(
         transfer, strmh->devh->usb_devh, format_desc->parent->bEndpointAddress,
