@@ -103,6 +103,10 @@ void cb(uvc_frame_t *frame, void *ptr) {
   uvc_frame_t *bgr;
   uvc_error_t ret;
 
+  dgnetP_exampleC("example.c ::: cb(): %s \n", "0");
+
+  dgnetP_exampleC("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
+
   // sudo ./example 2>/dev/null 1>video.yuv
   // write(1, frame->data, frame->data_bytes);
   write(fdnum_yuv, frame->data, frame->data_bytes);
@@ -184,6 +188,8 @@ void cb(uvc_frame_t *frame, void *ptr) {
    *
    * cvReleaseImageHeader(&cvImg);
    */
+
+  dgnetP_exampleC("example.c ::: cb(): %s \n", "999");
 
   uvc_free_frame(bgr);
 }

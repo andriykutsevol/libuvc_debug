@@ -820,7 +820,6 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_pts: %d \n", strmh->hold_pts);
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->last_scr: %d \n", strmh->last_scr);
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_last_scr: %d \n", strmh->hold_last_scr);
-  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->got_bytes: %d \n", strmh->got_bytes);
 
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->got_bytes: %d \n", strmh->got_bytes);
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
