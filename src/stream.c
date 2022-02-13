@@ -756,6 +756,7 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
       data_len = payload_len - header_len;
   }
 
+
   if (header_len < 2) {
     header_info = 0;
   } else {
@@ -797,6 +798,22 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
     }
   }
 
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: data_len: %d \n", data_len);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: header_len: %d \n", header_len);
+
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->fid: %d \n", strmh->fid);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_seq: %d \n", strmh->hold_seq);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->seq: %d \n", strmh->seq);  
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->pts: %d \n", strmh->pts);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_pts: %d \n", strmh->hold_pts);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->last_scr: %d \n", strmh->last_scr);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_last_scr: %d \n", strmh->hold_last_scr);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->got_bytes: %d \n", strmh->got_bytes);
+
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->got_bytes: %d \n", strmh->got_bytes);
+  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
+
+
   if (data_len > 0) {
     memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
     strmh->got_bytes += data_len;
@@ -830,7 +847,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
     dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "LIBUSB_TRANSFER_COMPLETED");
     if (transfer->num_iso_packets == 0) {
       /* This is a bulk mode transfer, so it just has one payload transfer */
-      _uvc_process_payload(strmh, transfer->buffer, transfer->actual_length);
+      _uvc_process_payload(strmh, transfer->buffer, transfer->auctal_length);
     } else {
       /* This is an isochronous mode transfer, so each packet has a payload transfer */
       int packet_id;
