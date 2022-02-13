@@ -847,7 +847,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
     dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "LIBUSB_TRANSFER_COMPLETED");
     if (transfer->num_iso_packets == 0) {
       /* This is a bulk mode transfer, so it just has one payload transfer */
-      _uvc_process_payload(strmh, transfer->buffer, transfer->auctal_length);
+      _uvc_process_payload(strmh, transfer->buffer, transfer->actual_length);
     } else {
       /* This is an isochronous mode transfer, so each packet has a payload transfer */
       int packet_id;
