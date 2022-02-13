@@ -798,6 +798,18 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
     }
   }
 
+
+
+  if (data_len > 0) {
+    memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
+    strmh->got_bytes += data_len;
+
+    if (header_info & (1 << 1)) {
+      /* The EOF bit is set, so publish the complete frame */
+      _uvc_swap_buffers(strmh);
+    }
+  }
+
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: data_len: %d \n", data_len);
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: header_len: %d \n", header_len);
 
@@ -813,16 +825,6 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->got_bytes: %d \n", strmh->got_bytes);
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
 
-
-  if (data_len > 0) {
-    memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
-    strmh->got_bytes += data_len;
-
-    if (header_info & (1 << 1)) {
-      /* The EOF bit is set, so publish the complete frame */
-      _uvc_swap_buffers(strmh);
-    }
-  }
 
   dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "999");
 }
