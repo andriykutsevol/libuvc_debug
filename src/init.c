@@ -122,7 +122,7 @@ void *_uvc_handle_events(void *arg) {
 
   while (!ctx->kill_handler_thread){
     dgnetP_initC("device.c ::: _uvc_handle_events() ::: %s \n", "1");
-    //dgnetP_initC("device.c ::: _uvc_handle_events() ::: libusb_handle_events_completed() \n");
+    dgnetP_initC_libusb("device.c ::: _uvc_handle_events() ::: libusb_handle_events_completed() \n");
     libusb_handle_events_completed(ctx->usb_ctx, &ctx->kill_handler_thread);
   }
   dgnetP_initC("device.c ::: _uvc_handle_events() ::: %s \n", "999");
