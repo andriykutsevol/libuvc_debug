@@ -55,6 +55,23 @@ void dgnetP_streamC(char *format, ...){
 //dgnetP_streamC("stream.c ::: function_name() ::: %s \n", "message");
 
 
+void dgnetP_streamC_libusb(char *format, ...){
+
+    FILE * pFile;
+    pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
+
+    va_list args;
+    va_start(args, format);
+    vfprintf(pFile, format, args);
+    va_end(args);  
+    fclose(pFile);
+}
+//dgnetP_streamC_libusb("stream.c ::: function_name() ::: %s \n", "message");
+
+
+
+
+
 #ifdef _MSC_VER
 
 #define DELTA_EPOCH_IN_MICROSECS  116444736000000000Ui64
@@ -842,6 +859,8 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
   uvc_stream_handle_t *strmh = transfer->user_data;
 
   dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
+  dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
+
 
   int resubmit = 1;
 
@@ -942,7 +961,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
       pthread_mutex_lock(&strmh->cb_mutex);
 
       /* Mark transfer as deleted. */
-      for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
+      for(i=0; i < _uIBUVC_NUM_TRANSFER_BUFS; i++) {
         if(strmh->transfers[i] == transfer) {
           UVC_DEBUG("Freeing orphan transfer %d (%p)", i, transfer);
           free(transfer->buffer);
@@ -961,6 +980,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
   }
 
   dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
+  dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
 }
 
 /** Begin streaming video from the camera into the callback function.
@@ -1490,6 +1510,7 @@ uvc_error_t uvc_stream_start_iso(
 void *_uvc_user_caller(void *arg) {
 
   dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "0");
+  dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "0");
 
   uvc_stream_handle_t *strmh = (uvc_stream_handle_t *) arg;
 
@@ -1518,6 +1539,7 @@ void *_uvc_user_caller(void *arg) {
   } while(1);
 
   dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "999");
+  dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "999");
 
   return NULL; // return value ignored
 }
