@@ -1517,17 +1517,26 @@ void *_uvc_user_caller(void *arg) {
   uint32_t last_seq = 0;
 
   do {
+    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "1");
     pthread_mutex_lock(&strmh->cb_mutex);
+    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "2");
 
     while (strmh->running && last_seq == strmh->hold_seq) {
+      dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "3");
       pthread_cond_wait(&strmh->cb_cond, &strmh->cb_mutex);
     }
 
+    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "4");
+
     if (!strmh->running) {
+      dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "5");
       pthread_mutex_unlock(&strmh->cb_mutex);
       break;
     }
     
+    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "6");
+
+
     last_seq = strmh->hold_seq;
     dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "_uvc_populate_frame(strmh);");
     _uvc_populate_frame(strmh);
@@ -1535,6 +1544,7 @@ void *_uvc_user_caller(void *arg) {
     pthread_mutex_unlock(&strmh->cb_mutex);
     
     dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
+    dgnetP_streamC_libusb("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
     strmh->user_cb(&strmh->frame, strmh->user_ptr);
   } while(1);
 
