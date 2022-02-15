@@ -66,7 +66,7 @@ void dgnetP_streamC_libusb(char *format, ...){
     // va_end(args);  
     // fclose(pFile);
 }
-////dgnetP_streamC_libusb("stream.c ::: function_name() ::: %s \n", "message");
+//dgnetP_streamC_libusb("stream.c ::: function_name() ::: %s \n", "message");
 
 
 

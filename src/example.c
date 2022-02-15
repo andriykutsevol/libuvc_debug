@@ -122,7 +122,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
 
   dgnetP_exampleC("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
 
-  dgnetP_exampleC_libusb("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
+  //dgnetP_exampleC_libusb("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
 
   // sudo ./example 2>/dev/null 1>video.yuv
   // write(1, frame->data, frame->data_bytes);

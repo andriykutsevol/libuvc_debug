@@ -118,15 +118,15 @@ void *_uvc_handle_events(void *arg) {
   uvc_context_t *ctx = (uvc_context_t *) arg;
 
   dgnetP_initC("device.c ::: _uvc_handle_events() ::: %s \n", "0");
-  dgnetP_initC_libusb("stream.c ::: _uvc_handle_events() ::: %s \n", "0");
+  //dgnetP_initC_libusb("stream.c ::: _uvc_handle_events() ::: %s \n", "0");
 
   while (!ctx->kill_handler_thread){
     dgnetP_initC("device.c ::: _uvc_handle_events() ::: %s \n", "1");
-    dgnetP_initC_libusb("device.c ::: _uvc_handle_events() ::: libusb_handle_events_completed() \n");
+    //dgnetP_initC_libusb("device.c ::: _uvc_handle_events() ::: libusb_handle_events_completed() \n");
     libusb_handle_events_completed(ctx->usb_ctx, &ctx->kill_handler_thread);
   }
   dgnetP_initC("device.c ::: _uvc_handle_events() ::: %s \n", "999");
-  dgnetP_initC_libusb("stream.c ::: _uvc_handle_events() ::: %s \n", "999");
+  //dgnetP_initC_libusb("stream.c ::: _uvc_handle_events() ::: %s \n", "999");
   return NULL;
 }
 
