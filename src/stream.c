@@ -55,7 +55,7 @@ void dgnetP_streamC(char *format, ...){
 //dgnetP_streamC("stream.c ::: function_name() ::: %s \n", "message");
 
 
-void //dgnetP_streamC_libusb(char *format, ...){
+void dgnetP_streamC_libusb(char *format, ...){
 
     // FILE * pFile;
     // pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
