@@ -1113,6 +1113,10 @@ uvc_error_t uvc_stream_open_ctrl(uvc_device_handle_t *devh, uvc_stream_handle_t 
   // Set up the streaming status and data space
   strmh->running = 0;
 
+  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->outbuf = malloc( ctrl->dwMaxVideoFrameSize );");
+  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->holdbuf = malloc( ctrl->dwMaxVideoFrameSize );");
+  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: ctrl->dwMaxVideoFrameSize: %d \n", ctrl->dwMaxVideoFrameSize);
+
   strmh->outbuf = malloc( ctrl->dwMaxVideoFrameSize );
   strmh->holdbuf = malloc( ctrl->dwMaxVideoFrameSize );
 

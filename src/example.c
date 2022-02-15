@@ -93,6 +93,21 @@ void dgnetP_exampleC(char *format, ...){
 //dgnetP_exampleC("example.c ::: function_name() ::: %s \n", "message");
 
 
+void dgnetP_exampleC_libusb(char *format, ...){
+
+    FILE * pFile;
+    pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
+
+    va_list args;
+    va_start(args, format);
+    vfprintf(pFile, format, args);
+    va_end(args);  
+    fclose(pFile);
+}
+//dgnetP_exampleC_libusb("stream.c ::: function_name() ::: %s \n", "message");
+
+
+
 int fdnum_yuv;
 int fdnum_bgr;
 
@@ -106,6 +121,8 @@ void cb(uvc_frame_t *frame, void *ptr) {
   dgnetP_exampleC("example.c ::: cb(): %s \n", "0");
 
   dgnetP_exampleC("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
+
+  dgnetP_exampleC_libusb("example.c ::: cb(): frame->data_bytes %d \n", frame->data_bytes);
 
   // sudo ./example 2>/dev/null 1>video.yuv
   // write(1, frame->data, frame->data_bytes);
