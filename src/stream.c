@@ -707,6 +707,8 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
   strmh->meta_outbuf = tmp_buf;
   strmh->meta_hold_bytes = strmh->meta_got_bytes;
 
+  dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_cond_broadcast(&strmh->cb_cond);");
+  dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_mutex_unlock(&strmh->cb_mutex);");
   pthread_cond_broadcast(&strmh->cb_cond);
   pthread_mutex_unlock(&strmh->cb_mutex);
 
