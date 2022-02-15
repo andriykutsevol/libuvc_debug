@@ -55,7 +55,7 @@ void dgnetP_streamC(char *format, ...){
 //dgnetP_streamC("stream.c ::: function_name() ::: %s \n", "message");
 
 
-void dgnetP_streamC_libusb(char *format, ...){
+void //dgnetP_streamC_libusb(char *format, ...){
 
     // FILE * pFile;
     // pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
@@ -66,7 +66,7 @@ void dgnetP_streamC_libusb(char *format, ...){
     // va_end(args);  
     // fclose(pFile);
 }
-//dgnetP_streamC_libusb("stream.c ::: function_name() ::: %s \n", "message");
+////dgnetP_streamC_libusb("stream.c ::: function_name() ::: %s \n", "message");
 
 
 
@@ -707,8 +707,8 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
   strmh->meta_outbuf = tmp_buf;
   strmh->meta_hold_bytes = strmh->meta_got_bytes;
 
-  dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_cond_broadcast(&strmh->cb_cond);");
-  dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_mutex_unlock(&strmh->cb_mutex);");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_cond_broadcast(&strmh->cb_cond);");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_swap_buffers() ::: %s \n", "pthread_mutex_unlock(&strmh->cb_mutex);");
   pthread_cond_broadcast(&strmh->cb_cond);
   pthread_mutex_unlock(&strmh->cb_mutex);
 
@@ -861,7 +861,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
   uvc_stream_handle_t *strmh = transfer->user_data;
 
   dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
-  dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "0");
 
 
   int resubmit = 1;
@@ -982,7 +982,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
   }
 
   dgnetP_streamC("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
-  dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_stream_callback() ::: %s \n", "999");
 }
 
 /** Begin streaming video from the camera into the callback function.
@@ -1113,9 +1113,9 @@ uvc_error_t uvc_stream_open_ctrl(uvc_device_handle_t *devh, uvc_stream_handle_t 
   // Set up the streaming status and data space
   strmh->running = 0;
 
-  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->outbuf = malloc( ctrl->dwMaxVideoFrameSize );");
-  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->holdbuf = malloc( ctrl->dwMaxVideoFrameSize );");
-  dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: ctrl->dwMaxVideoFrameSize: %d \n", ctrl->dwMaxVideoFrameSize);
+  //dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->outbuf = malloc( ctrl->dwMaxVideoFrameSize );");
+  //dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: %s \n", "strmh->holdbuf = malloc( ctrl->dwMaxVideoFrameSize );");
+  //dgnetP_streamC_libusb("stream.c ::: uvc_stream_open_ctrl()() ::: ctrl->dwMaxVideoFrameSize: %d \n", ctrl->dwMaxVideoFrameSize);
 
   strmh->outbuf = malloc( ctrl->dwMaxVideoFrameSize );
   strmh->holdbuf = malloc( ctrl->dwMaxVideoFrameSize );
@@ -1516,31 +1516,31 @@ uvc_error_t uvc_stream_start_iso(
 void *_uvc_user_caller(void *arg) {
 
   dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "0");
-  dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "0");
+  //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "0");
 
   uvc_stream_handle_t *strmh = (uvc_stream_handle_t *) arg;
 
   uint32_t last_seq = 0;
 
   do {
-    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "1");
+    //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "1");
     pthread_mutex_lock(&strmh->cb_mutex);
-    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "2");
+    //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "2");
 
     while (strmh->running && last_seq == strmh->hold_seq) {
-      dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "3");
+      //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "3");
       pthread_cond_wait(&strmh->cb_cond, &strmh->cb_mutex);
     }
 
-    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "4");
+    //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "4");
 
     if (!strmh->running) {
-      dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "5");
+      //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "5");
       pthread_mutex_unlock(&strmh->cb_mutex);
       break;
     }
     
-    dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "6");
+    //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "6");
 
 
     last_seq = strmh->hold_seq;
@@ -1550,12 +1550,12 @@ void *_uvc_user_caller(void *arg) {
     pthread_mutex_unlock(&strmh->cb_mutex);
     
     dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
-    dgnetP_streamC_libusb("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
+    //dgnetP_streamC_libusb("stream.c ::: *_uvc_user_caller() ::: %s \n", "strmh->user_cb(&strmh->frame, strmh->user_ptr);!!!!!!!!");
     strmh->user_cb(&strmh->frame, strmh->user_ptr);
   } while(1);
 
   dgnetP_streamC("stream.c ::: *_uvc_user_caller() ::: %s \n", "999");
-  dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "999");
+  //dgnetP_streamC_libusb("stream.c :::  *_uvc_user_caller() ::: %s \n", "999");
 
   return NULL; // return value ignored
 }
@@ -1569,7 +1569,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   uvc_frame_desc_t *frame_desc;
 
   dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
-  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
 
   /** @todo this stuff that hits the main config cache should really happen
    * in start() so that only one thread hits these data. all of this stuff
@@ -1586,27 +1586,27 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   
   switch (frame->frame_format) {
   case UVC_FRAME_FORMAT_BGR:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "1");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "1");
     frame->step = frame->width * 3;
     break;
   case UVC_FRAME_FORMAT_YUYV:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "2");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "2");
     frame->step = frame->width * 2;
     break;
   case UVC_FRAME_FORMAT_NV12:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "3");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "3");
     frame->step = frame->width;
     break;
   case UVC_FRAME_FORMAT_MJPEG:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "4");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "4");
     frame->step = 0;
     break;
   case UVC_FRAME_FORMAT_H264:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "5");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "5");
     frame->step = 0;
     break;
   default:
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "6");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "6");
     frame->step = 0;
     break;
   }
@@ -1616,7 +1616,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
 
   /* copy the image data from the hold buffer to the frame (unnecessary extra buf?) */
   if (frame->data_bytes < strmh->hold_bytes) {
-    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "7");
+    //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "7");
     frame->data = realloc(frame->data, strmh->hold_bytes);
   }
   frame->data_bytes = strmh->hold_bytes;
@@ -1624,20 +1624,20 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
 
   if (strmh->meta_hold_bytes > 0)
   {
-      dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "8");
+      //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "8");
       if (frame->metadata_bytes < strmh->meta_hold_bytes)
       {
-          dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "9");
+          //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "9");
           frame->metadata = realloc(frame->metadata, strmh->meta_hold_bytes);
       }
       frame->metadata_bytes = strmh->meta_hold_bytes;
       memcpy(frame->metadata, strmh->meta_holdbuf, frame->metadata_bytes);
   }
 
-  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_seq:   %d \n", strmh->hold_seq);
-  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
-  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: frame->data_bytes: %d \n", frame->data_bytes);
-  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_seq:   %d \n", strmh->hold_seq);
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: frame->data_bytes: %d \n", frame->data_bytes);
+  //dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 
   dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 }
