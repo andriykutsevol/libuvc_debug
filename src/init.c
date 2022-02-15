@@ -96,14 +96,14 @@ void dgnetP_initC(char *format, ...){
 
 void dgnetP_initC_libusb(char *format, ...){
 
-    FILE * pFile;
-    pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
+    // FILE * pFile;
+    // pFile = fopen ("/home/dgnet/build/results/libuvc_libusb_out.txt","a");
 
-    va_list args;
-    va_start(args, format);
-    vfprintf(pFile, format, args);
-    va_end(args);  
-    fclose(pFile);
+    // va_list args;
+    // va_start(args, format);
+    // vfprintf(pFile, format, args);
+    // va_end(args);  
+    // fclose(pFile);
 }
 //dgnetP_initC_libusb("stream.c ::: function_name() ::: %s \n", "message");
 
