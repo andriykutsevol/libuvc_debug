@@ -44,14 +44,14 @@
 #include <stdarg.h>
 void dgnetP_deviceC(char *format, ...){
 
-    // FILE * pFile;
-    // pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
+    FILE * pFile;
+    pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
 
-    // va_list args;
-    // va_start(args, format);
-    // vfprintf(pFile, format, args);
-    // va_end(args);  
-    // fclose(pFile);
+    va_list args;
+    va_start(args, format);
+    vfprintf(pFile, format, args);
+    va_end(args);  
+    fclose(pFile);
 }
 //dgnetP_deviceC("device.c ::: function_name() ::: %s \n", "message");
 

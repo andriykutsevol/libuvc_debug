@@ -43,14 +43,14 @@
 #include <stdarg.h>
 void dgnetP_streamC(char *format, ...){
 
-    // FILE * pFile;
-    // pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
+    FILE * pFile;
+    pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
 
-    // va_list args;
-    // va_start(args, format);
-    // vfprintf(pFile, format, args);
-    // va_end(args);  
-    // fclose(pFile);
+    va_list args;
+    va_start(args, format);
+    vfprintf(pFile, format, args);
+    va_end(args);  
+    fclose(pFile);
 }
 //dgnetP_streamC("stream.c ::: function_name() ::: %s \n", "message");
 
@@ -1569,6 +1569,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   uvc_frame_desc_t *frame_desc;
 
   dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
+  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "0");
 
   /** @todo this stuff that hits the main config cache should really happen
    * in start() so that only one thread hits these data. all of this stuff
@@ -1585,21 +1586,27 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   
   switch (frame->frame_format) {
   case UVC_FRAME_FORMAT_BGR:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "1");
     frame->step = frame->width * 3;
     break;
   case UVC_FRAME_FORMAT_YUYV:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "2");
     frame->step = frame->width * 2;
     break;
   case UVC_FRAME_FORMAT_NV12:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "3");
     frame->step = frame->width;
     break;
   case UVC_FRAME_FORMAT_MJPEG:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "4");
     frame->step = 0;
     break;
   case UVC_FRAME_FORMAT_H264:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "5");
     frame->step = 0;
     break;
   default:
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "6");
     frame->step = 0;
     break;
   }
@@ -1609,6 +1616,7 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
 
   /* copy the image data from the hold buffer to the frame (unnecessary extra buf?) */
   if (frame->data_bytes < strmh->hold_bytes) {
+    dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "7");
     frame->data = realloc(frame->data, strmh->hold_bytes);
   }
   frame->data_bytes = strmh->hold_bytes;
@@ -1616,13 +1624,20 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
 
   if (strmh->meta_hold_bytes > 0)
   {
+      dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "8");
       if (frame->metadata_bytes < strmh->meta_hold_bytes)
       {
+          dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "9");
           frame->metadata = realloc(frame->metadata, strmh->meta_hold_bytes);
       }
       frame->metadata_bytes = strmh->meta_hold_bytes;
       memcpy(frame->metadata, strmh->meta_holdbuf, frame->metadata_bytes);
   }
+
+  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_seq:   %d \n", strmh->hold_seq);
+  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: strmh->hold_bytes: %d \n", strmh->hold_bytes);
+  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: frame->data_bytes: %d \n", frame->data_bytes);
+  dgnetP_streamC_libusb("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 
   dgnetP_streamC("stream.c ::: _uvc_populate_frame() ::: %s \n", "999");
 }
