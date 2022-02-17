@@ -246,7 +246,9 @@ int main(int argc, char **argv) {
   res = uvc_find_device(
       ctx, &dev,
       0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
-  dgnetP_exampleC("example.c ::: main() ::: %s, %d \n", "end: uvc_find_device()", dev->ref);
+      
+  //error: invalid use of incomplete typedef ‘uvc_device_t’ {aka ‘struct uvc_device’}    
+  //dgnetP_exampleC("example.c ::: main() ::: %s, %d \n", "end: uvc_find_device()", dev->ref);
 
   if (res < 0) {
     uvc_perror(res, "uvc_find_device"); /* no devices found */
