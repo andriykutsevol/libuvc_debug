@@ -246,7 +246,7 @@ int main(int argc, char **argv) {
   res = uvc_find_device(
       ctx, &dev,
       0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
-      
+
   //error: invalid use of incomplete typedef ‘uvc_device_t’ {aka ‘struct uvc_device’}    
   //dgnetP_exampleC("example.c ::: main() ::: %s, %d \n", "end: uvc_find_device()", dev->ref);
 
@@ -278,21 +278,21 @@ int main(int argc, char **argv) {
       const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;      // 640x480
 
       // Rally
-      // frame_desc = frame_desc->next;  // 160x120
-      // frame_desc = frame_desc->next;  // 176x144
-      // frame_desc = frame_desc->next;  // 320x180
-      // frame_desc = frame_desc->next;  // 320x240
-      // frame_desc = frame_desc->next;  // 352x288
-      // frame_desc = frame_desc->next;  // 480x270
-      // frame_desc = frame_desc->next;  // 640x360
-      // frame_desc = frame_desc->next;  // 800x448
-      // frame_desc = frame_desc->next;  // 800x600
-      // frame_desc = frame_desc->next;  // 848x480
-      // frame_desc = frame_desc->next;  // 960x540
-      // frame_desc = frame_desc->next;  // 1024x576
-      // frame_desc = frame_desc->next;  // 1280x720
-      // frame_desc = frame_desc->next;  // 1600x896
-      // frame_desc = frame_desc->next;  // 1920x1080
+      frame_desc = frame_desc->next;  // 160x120
+      frame_desc = frame_desc->next;  // 176x144
+      frame_desc = frame_desc->next;  // 320x180
+      frame_desc = frame_desc->next;  // 320x240
+      frame_desc = frame_desc->next;  // 352x288
+      frame_desc = frame_desc->next;  // 480x270
+      frame_desc = frame_desc->next;  // 640x360
+      frame_desc = frame_desc->next;  // 800x448
+      frame_desc = frame_desc->next;  // 800x600
+      frame_desc = frame_desc->next;  // 848x480
+      frame_desc = frame_desc->next;  // 960x540
+      frame_desc = frame_desc->next;  // 1024x576
+      frame_desc = frame_desc->next;  // 1280x720
+      frame_desc = frame_desc->next;  // 1600x896
+      frame_desc = frame_desc->next;  // 1920x1080
 
       // Mine
       // frame_desc = frame_desc->next; // 160x120
