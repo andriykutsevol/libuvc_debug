@@ -796,7 +796,7 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
 
     if (header_info & 0x40) {
       UVC_DEBUG("bad packet: error bit set");
-      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "9");
+      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "9");
       return;
     }
 
