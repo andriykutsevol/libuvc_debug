@@ -774,10 +774,10 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
     }
 
     dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "5");
-    if (strmh->devh->is_isight)
+    if (strmh->devh->is_isight){
       dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "6");
       data_len = 0;
-    else
+    }else{}
       data_len = payload_len - header_len;
       dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "7");
   }
