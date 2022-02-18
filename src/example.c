@@ -1,3 +1,5 @@
+//ffplay -f rawvideo -pixel_format yuyv422 -video_size 640x480 -i out.yuv
+
 // andriy@andriyK:~/Documents/DGC/Reports/QEMU/Logi_Rally_Camera/results:
 // $ ffmpeg -f rawvideo -pix_fmt yuyv422 -s:v 640x480 -r 15 -i ./out.yuv output.avi
 // ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
@@ -283,16 +285,16 @@ int main(int argc, char **argv) {
       frame_desc = frame_desc->next;  // 320x180
       frame_desc = frame_desc->next;  // 320x240
       frame_desc = frame_desc->next;  // 352x288
-      frame_desc = frame_desc->next;  // 480x270
-      frame_desc = frame_desc->next;  // 640x360
-      frame_desc = frame_desc->next;  // 800x448
-      frame_desc = frame_desc->next;  // 800x600
-      frame_desc = frame_desc->next;  // 848x480
-      frame_desc = frame_desc->next;  // 960x540
-      frame_desc = frame_desc->next;  // 1024x576
-      frame_desc = frame_desc->next;  // 1280x720
-      frame_desc = frame_desc->next;  // 1600x896
-      frame_desc = frame_desc->next;  // 1920x1080
+      // frame_desc = frame_desc->next;  // 480x270
+      // frame_desc = frame_desc->next;  // 640x360
+      // frame_desc = frame_desc->next;  // 800x448
+      // frame_desc = frame_desc->next;  // 800x600
+      // frame_desc = frame_desc->next;  // 848x480
+      // frame_desc = frame_desc->next;  // 960x540
+      // frame_desc = frame_desc->next;  // 1024x576
+      // frame_desc = frame_desc->next;  // 1280x720
+      // frame_desc = frame_desc->next;  // 1600x896
+      // frame_desc = frame_desc->next;  // 1920x1080
 
       // Mine
       // frame_desc = frame_desc->next; // 160x120
