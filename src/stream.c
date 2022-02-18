@@ -777,9 +777,10 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
     if (strmh->devh->is_isight){
       dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "6");
       data_len = 0;
-    }else{}
+    }else{
       data_len = payload_len - header_len;
       dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "7");
+    }
   }
 
 
@@ -794,7 +795,7 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
 
     if (header_info & 0x40) {
       UVC_DEBUG("bad packet: error bit set");
-      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "9");
+      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "9");
       return;
     }
 
@@ -802,7 +803,7 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
       /* The frame ID bit was flipped, but we have image data sitting
          around from prior transfers. This means the camera didn't send
          an EOF for the last transfer of the previous frame. */
-      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "10");   
+      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "10");   
       _uvc_swap_buffers(strmh);
     }
 
@@ -812,14 +813,14 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
     if (header_info & (1 << 2)) {
       strmh->pts = DW_TO_INT(payload + variable_offset);
       variable_offset += 4;
-      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "12");
+      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "12");
     }
 
     if (header_info & (1 << 3)) {
       /** @todo read the SOF token counter */
       strmh->last_scr = DW_TO_INT(payload + variable_offset);
       variable_offset += 6;
-      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "13");
+      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "13");
     }
 
     if (header_len > variable_offset)
@@ -827,21 +828,21 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
         // Metadata is attached to header
         memcpy(strmh->meta_outbuf + strmh->meta_got_bytes, payload + variable_offset, header_len - variable_offset);
         strmh->meta_got_bytes += header_len - variable_offset;
-        dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "14");
+        //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "14");
     }
   }
 
-  dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "15");
+  //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "15");
 
   if (data_len > 0) {
     memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
     strmh->got_bytes += data_len;
 
-    dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "16");
+    //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "16");
 
     if (header_info & (1 << 1)) {
       /* The EOF bit is set, so publish the complete frame */
-      dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "17");
+      //dgnetP_streamC("stream.c ::: _uvc_process_payload() ::: %s \n", "17");
       _uvc_swap_buffers(strmh);
     }
   }
