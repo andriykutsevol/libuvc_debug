@@ -1426,6 +1426,7 @@ uvc_error_t uvc_stream_start(
     }
 
 
+
     /* Set up the transfers */
     for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; ++transfer_id) {
     
