@@ -329,7 +329,6 @@ int main(int argc, char **argv) {
       // 'MJPG' (Motion-JPEG, compressed) ===========================================
 
 
-      frame_desc = frame_desc->next;  // 640x480
       frame_desc = frame_desc->next;  // 160x120
       frame_desc = frame_desc->next;  // 176x144
       frame_desc = frame_desc->next;  // 320x176
