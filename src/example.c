@@ -349,78 +349,78 @@ int main(int argc, char **argv) {
       //printf("\nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
       dgnetP_exampleC("example.c ::: main() ::: \nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
 
-      /* Try to negotiate first stream profile */
-      res = uvc_get_stream_ctrl_format_size(
-          devh, &ctrl, /* result stored in ctrl */
-          frame_format,
-          width, height, fps /* width, height, fps */
-      );
+  //     /* Try to negotiate first stream profile */
+  //     res = uvc_get_stream_ctrl_format_size(
+  //         devh, &ctrl, /* result stored in ctrl */
+  //         frame_format,
+  //         width, height, fps /* width, height, fps */
+  //     );
 
-      /* Print out the result */
-      uvc_print_stream_ctrl(&ctrl, stderr);
+  //     /* Print out the result */
+  //     uvc_print_stream_ctrl(&ctrl, stderr);
 
-      if (res < 0) {
-        uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
-      } else {
-        /* Start the video stream. The library will call user function cb:
-         *   cb(frame, (void *) 12345)
-         */
-        res = uvc_start_streaming(devh, &ctrl, cb, (void *) 12345, 0);
+  //     if (res < 0) {
+  //       uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
+  //     } else {
+  //       /* Start the video stream. The library will call user function cb:
+  //        *   cb(frame, (void *) 12345)
+  //        */
+  //       res = uvc_start_streaming(devh, &ctrl, cb, (void *) 12345, 0);
 
-        if (res < 0) {
-          uvc_perror(res, "start_streaming"); /* unable to start stream */
-        } else {
-          //puts("Streaming...");
-          dgnetP_exampleC("example.c ::: main() ::: Streaming...\n");
+  //       if (res < 0) {
+  //         uvc_perror(res, "start_streaming"); /* unable to start stream */
+  //       } else {
+  //         //puts("Streaming...");
+  //         dgnetP_exampleC("example.c ::: main() ::: Streaming...\n");
 
-          /* enable auto exposure - see uvc_set_ae_mode documentation */
-          //puts("Enabling auto exposure ...");
-          dgnetP_exampleC("example.c ::: main() ::: Enabling auto exposure ...\n");
-          const uint8_t UVC_AUTO_EXPOSURE_MODE_AUTO = 2;
-          res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_AUTO);
-          if (res == UVC_SUCCESS) {
-            puts(" ... enabled auto exposure");
-          } else if (res == UVC_ERROR_PIPE) {
-            /* this error indicates that the camera does not support the full AE mode;
-             * try again, using aperture priority mode (fixed aperture, variable exposure time) */
-           //puts(" ... full AE not supported, trying aperture priority mode");
-           dgnetP_exampleC("example.c ::: main() :::  ... full AE not supported, trying aperture priority mode \n");
-            const uint8_t UVC_AUTO_EXPOSURE_MODE_APERTURE_PRIORITY = 8;
-            res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_APERTURE_PRIORITY);
-            if (res < 0) {
-              uvc_perror(res, " ... uvc_set_ae_mode failed to enable aperture priority mode");
-            } else {
-              //puts(" ... enabled aperture priority auto exposure mode");
-              dgnetP_exampleC("example.c ::: main() :::  ... full AE not supported, trying aperture priority mode \n");
-            }
-          } else {
-            uvc_perror(res, " ... uvc_set_ae_mode failed to enable auto exposure mode");
-          }
+  //         /* enable auto exposure - see uvc_set_ae_mode documentation */
+  //         //puts("Enabling auto exposure ...");
+  //         dgnetP_exampleC("example.c ::: main() ::: Enabling auto exposure ...\n");
+  //         const uint8_t UVC_AUTO_EXPOSURE_MODE_AUTO = 2;
+  //         res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_AUTO);
+  //         if (res == UVC_SUCCESS) {
+  //           puts(" ... enabled auto exposure");
+  //         } else if (res == UVC_ERROR_PIPE) {
+  //           /* this error indicates that the camera does not support the full AE mode;
+  //            * try again, using aperture priority mode (fixed aperture, variable exposure time) */
+  //          //puts(" ... full AE not supported, trying aperture priority mode");
+  //          dgnetP_exampleC("example.c ::: main() :::  ... full AE not supported, trying aperture priority mode \n");
+  //           const uint8_t UVC_AUTO_EXPOSURE_MODE_APERTURE_PRIORITY = 8;
+  //           res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_APERTURE_PRIORITY);
+  //           if (res < 0) {
+  //             uvc_perror(res, " ... uvc_set_ae_mode failed to enable aperture priority mode");
+  //           } else {
+  //             //puts(" ... enabled aperture priority auto exposure mode");
+  //             dgnetP_exampleC("example.c ::: main() :::  ... full AE not supported, trying aperture priority mode \n");
+  //           }
+  //         } else {
+  //           uvc_perror(res, " ... uvc_set_ae_mode failed to enable auto exposure mode");
+  //         }
 
-          sleep(10); /* stream for 10 seconds */
+  //         sleep(10); /* stream for 10 seconds */
 
-          /* End the stream. Blocks until last callback is serviced */
-          uvc_stop_streaming(devh);
-          //puts("Done streaming.");
-          dgnetP_exampleC("example.c ::: main() ::: Done streaming.\n");
+  //         /* End the stream. Blocks until last callback is serviced */
+  //         uvc_stop_streaming(devh);
+  //         //puts("Done streaming.");
+  //         dgnetP_exampleC("example.c ::: main() ::: Done streaming.\n");
           
-        }
-      }
+  //       }
+  //     }
 
-      /* Release our handle on the device */
-      uvc_close(devh);
-      //puts("Device closed");
-      dgnetP_exampleC("example.c ::: main() ::: Device closed \n");
-    }
+  //     /* Release our handle on the device */
+  //     uvc_close(devh);
+  //     //puts("Device closed");
+  //     dgnetP_exampleC("example.c ::: main() ::: Device closed \n");
+     }
 
-    /* Release the device descriptor */
-    uvc_unref_device(dev);
+  //   /* Release the device descriptor */
+  //   uvc_unref_device(dev);
   }
 
-  /* Close the UVC context. This closes and cleans up any existing device handles,
-   * and it closes the libusb context if one was not provided. */
-  uvc_exit(ctx);
-  //puts("UVC exited");
+  // /* Close the UVC context. This closes and cleans up any existing device handles,
+  //  * and it closes the libusb context if one was not provided. */
+  // uvc_exit(ctx);
+  // //puts("UVC exited");
   dgnetP_exampleC("example.c ::: main() ::: UVC exited \n");
 
   return 0;
