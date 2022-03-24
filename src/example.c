@@ -328,29 +328,45 @@ int main(int argc, char **argv) {
 
       // 'MJPG' (Motion-JPEG, compressed) ===========================================
 
+      // My
+      // frame_desc = frame_desc->next;  // 160x120
+      // frame_desc = frame_desc->next;  // 176x144
+      // frame_desc = frame_desc->next;  // 320x176
+      // frame_desc = frame_desc->next;  // 320x240
+      // frame_desc = frame_desc->next;  // 352x288
+      // frame_desc = frame_desc->next;  // 432x240
+      // frame_desc = frame_desc->next;  // 544x288
+      // frame_desc = frame_desc->next;  // 640x360
+      // frame_desc = frame_desc->next;  // 752x416
+      // frame_desc = frame_desc->next;  // 800x448
+      // frame_desc = frame_desc->next;  // 800x600
+      // frame_desc = frame_desc->next;  // 864x480
+      // frame_desc = frame_desc->next;  // 960x544
+      // frame_desc = frame_desc->next;  // 960x720
+      // frame_desc = frame_desc->next;  // 1024x576
+      // frame_desc = frame_desc->next;  // 1184x656
+      // frame_desc = frame_desc->next;  // 1280x720
+      // frame_desc = frame_desc->next;  // 1280x960
 
+
+      // Rally
       frame_desc = frame_desc->next;  // 160x120
       frame_desc = frame_desc->next;  // 176x144
-      frame_desc = frame_desc->next;  // 320x176
+      frame_desc = frame_desc->next;  // 320x180
       frame_desc = frame_desc->next;  // 320x240
       frame_desc = frame_desc->next;  // 352x288
-      frame_desc = frame_desc->next;  // 432x240
-      frame_desc = frame_desc->next;  // 544x288
+      frame_desc = frame_desc->next;  // 480x270
       frame_desc = frame_desc->next;  // 640x360
-      frame_desc = frame_desc->next;  // 752x416
       frame_desc = frame_desc->next;  // 800x448
       frame_desc = frame_desc->next;  // 800x600
-      frame_desc = frame_desc->next;  // 864x480
-      frame_desc = frame_desc->next;  // 960x544
-      frame_desc = frame_desc->next;  // 960x720
+      frame_desc = frame_desc->next;  // 848x480
+      frame_desc = frame_desc->next;  // 960x540
       frame_desc = frame_desc->next;  // 1024x576
-      frame_desc = frame_desc->next;  // 1184x656
       frame_desc = frame_desc->next;  // 1280x720
-      frame_desc = frame_desc->next;  // 1280x960
-
-
-
-
+      frame_desc = frame_desc->next;  // 1600x896
+      frame_desc = frame_desc->next;  // 1920x1080
+      frame_desc = frame_desc->next;  // 2560x1440
+      frame_desc = frame_desc->next;  // 3840x2160
 
 
       enum uvc_frame_format frame_format;
@@ -377,7 +393,7 @@ int main(int argc, char **argv) {
       }
 
       //printf("\nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
-      dgnetP_exampleC("example.c ::: main() ::: \nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
+      dgnetP_exampleC("example.c ::: main() ::: \nFormat: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
 
       /* Try to negotiate first stream profile */
       res = uvc_get_stream_ctrl_format_size(
