@@ -395,12 +395,21 @@ int main(int argc, char **argv) {
       //printf("\nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
       dgnetP_exampleC("example.c ::: main() ::: \nFormat: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
 
-      /* Try to negotiate first stream profile */
-      res = uvc_get_stream_ctrl_format_size(
-          devh, &ctrl, /* result stored in ctrl */
-          frame_format,
-          width, height, fps /* width, height, fps */
-      );
+
+      for(int j=0; j<10; j++){
+          /* Try to negotiate first stream profile */
+          res = uvc_get_stream_ctrl_format_size(
+              devh, &ctrl, /* result stored in ctrl */
+              frame_format,
+              width, height, fps /* width, height, fps */
+          );
+
+          if (res >=0){
+            break;
+          }else{
+            printf("Error: Trying to negotiate stream\n");
+          }   
+      }
 
       /* Print out the result */
       uvc_print_stream_ctrl(&ctrl, stderr);
