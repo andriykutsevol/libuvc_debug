@@ -417,7 +417,7 @@ int main(int argc, char **argv) {
       if (res < 0) {
         uvc_perror(res, "get_mode"); /* device doesn't provide a matching stream */
       } else {
-        printf("A stream has been negotiated\n");
+        printf("Done. A stream has been negotiated\n");
         /* Start the video stream. The library will call user function cb:
          *   cb(frame, (void *) 12345)
          */
