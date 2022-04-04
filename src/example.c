@@ -328,7 +328,7 @@ int main(int argc, char **argv) {
 
       // 'MJPG' (Motion-JPEG, compressed) ===========================================
 
-      // My
+      // Mine
       // frame_desc = frame_desc->next;  // 160x120
       // frame_desc = frame_desc->next;  // 176x144
       // frame_desc = frame_desc->next;  // 320x176
@@ -408,7 +408,8 @@ int main(int argc, char **argv) {
             break;
           }else{
             printf("Error: Trying to negotiate stream\n");
-          }   
+          }  
+          sleep(1); 
       }
 
       /* Print out the result */
