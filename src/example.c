@@ -393,7 +393,7 @@ int main(int argc, char **argv) {
       }
 
       //printf("\nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
-      dgnetP_exampleC("example.c ::: main() ::: \nFormat: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
+      dgnetP_exampleC("example.c ::: main() ::: Format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
 
 
       for(int j=0; j<10; j++){
