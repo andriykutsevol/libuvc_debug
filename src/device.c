@@ -362,10 +362,11 @@ uvc_error_t uvc_open(
     return ret;
   }
 
+  struct libusb_device_descriptor desc;
+  libusb_get_device_descriptor (dev->usb_dev, &desc);
 
   unsigned char manufacturer[200];
-  libusb_get_string_descriptor_ascii(usb_devh, desc->iManufacturer,
-    manufacturer,200);
+  libusb_get_string_descriptor_ascii(usb_devh, desc->iManufacturer, manufacturer,200);
   //printf("%s \n", manufacturer);
   dgnetP_deviceC("device.c ::: uvc_open() ::: %s \n", manufacturer);
 
