@@ -282,7 +282,7 @@ int main(int argc, char **argv) {
 
       const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
 
-      format_desc = format_desc->next;
+      //format_desc = format_desc->next;
 
       const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;      // 640x480
 
