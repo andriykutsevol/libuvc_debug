@@ -368,7 +368,7 @@ uvc_error_t uvc_open(
   unsigned char manufacturer[200];
   libusb_get_string_descriptor_ascii(usb_devh, desc.iManufacturer, manufacturer,200);
   //printf("%s \n", manufacturer);
-  dgnetP_deviceC("device.c ::: uvc_open() ::: %s \n", manufacturer);
+  dgnetP_deviceC("device.c ::: uvc_open() ::: %.10s \n", manufacturer);
 
 
   ret = uvc_open_internal(dev, usb_devh, devh);
