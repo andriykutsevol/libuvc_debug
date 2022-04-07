@@ -368,18 +368,18 @@ uvc_error_t uvc_open(
   unsigned char manufacturer[200];
   libusb_get_string_descriptor_ascii(usb_devh, desc.iManufacturer, manufacturer, 200);
   //printf("%s \n", manufacturer);
-  dgnetP_deviceC("device.c ::: uvc_open() manufacturer::: %.10s \n", manufacturer);
+  dgnetP_deviceC("device.c ::: uvc_open() manufacturer::: %.200s \n", manufacturer);
 
   unsigned char product[200];
   libusb_get_string_descriptor_ascii(usb_devh, desc.iProduct, product, 200);
   //printf("%s \n", manufacturer);
-  dgnetP_deviceC("device.c ::: uvc_open() product::: %.10s \n", product);
+  dgnetP_deviceC("device.c ::: uvc_open() product::: %.200s \n", product);
 
 
   unsigned char snumber[200];
   libusb_get_string_descriptor_ascii(usb_devh, desc.iSerialNumber, snumber, 200);
   //printf("%s \n", manufacturer);
-  dgnetP_deviceC("device.c ::: uvc_open() snumber::: %.10s \n", snumber);
+  dgnetP_deviceC("device.c ::: uvc_open() snumber::: %.200s \n", snumber);
 
 
   ret = uvc_open_internal(dev, usb_devh, devh);
