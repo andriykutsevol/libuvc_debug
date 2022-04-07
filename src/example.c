@@ -350,23 +350,23 @@ int main(int argc, char **argv) {
 
 
       // Rally
-      frame_desc = frame_desc->next;  // 160x120
-      frame_desc = frame_desc->next;  // 176x144
-      frame_desc = frame_desc->next;  // 320x180
-      frame_desc = frame_desc->next;  // 320x240
-      frame_desc = frame_desc->next;  // 352x288
-      frame_desc = frame_desc->next;  // 480x270
-      frame_desc = frame_desc->next;  // 640x360
-      frame_desc = frame_desc->next;  // 800x448
-      frame_desc = frame_desc->next;  // 800x600
-      frame_desc = frame_desc->next;  // 848x480
-      frame_desc = frame_desc->next;  // 960x540
-      frame_desc = frame_desc->next;  // 1024x576
-      frame_desc = frame_desc->next;  // 1280x720
-      frame_desc = frame_desc->next;  // 1600x896
-      frame_desc = frame_desc->next;  // 1920x1080
-      frame_desc = frame_desc->next;  // 2560x1440
-      frame_desc = frame_desc->next;  // 3840x2160
+      // frame_desc = frame_desc->next;  // 160x120
+      // frame_desc = frame_desc->next;  // 176x144
+      // frame_desc = frame_desc->next;  // 320x180
+      // frame_desc = frame_desc->next;  // 320x240
+      // frame_desc = frame_desc->next;  // 352x288
+      // frame_desc = frame_desc->next;  // 480x270
+      // frame_desc = frame_desc->next;  // 640x360
+      // frame_desc = frame_desc->next;  // 800x448
+      // frame_desc = frame_desc->next;  // 800x600
+      // frame_desc = frame_desc->next;  // 848x480
+      // frame_desc = frame_desc->next;  // 960x540
+      // frame_desc = frame_desc->next;  // 1024x576
+      // frame_desc = frame_desc->next;  // 1280x720
+      // frame_desc = frame_desc->next;  // 1600x896
+      // frame_desc = frame_desc->next;  // 1920x1080
+      // frame_desc = frame_desc->next;  // 2560x1440
+      // frame_desc = frame_desc->next;  // 3840x2160
 
 
       enum uvc_frame_format frame_format;
