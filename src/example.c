@@ -7,89 +7,90 @@
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
 void cb(uvc_frame_t *frame, void *ptr) {
-  uvc_frame_t *bgr;
-  uvc_error_t ret;
-  enum uvc_frame_format *frame_format = (enum uvc_frame_format *)ptr;
-  /* FILE *fp;
-   * static int jpeg_count = 0;
-   * static const char *H264_FILE = "iOSDevLog.h264";
-   * static const char *MJPEG_FILE = ".jpeg";
-   * char filename[16]; */
+  printf("callback!\n");
+  // uvc_frame_t *bgr;
+  // uvc_error_t ret;
+  // enum uvc_frame_format *frame_format = (enum uvc_frame_format *)ptr;
+  // /* FILE *fp;
+  //  * static int jpeg_count = 0;
+  //  * static const char *H264_FILE = "iOSDevLog.h264";
+  //  * static const char *MJPEG_FILE = ".jpeg";
+  //  * char filename[16]; */
 
-  /* We'll convert the image from YUV/JPEG to BGR, so allocate space */
-  bgr = uvc_allocate_frame(frame->width * frame->height * 3);
-  if (!bgr) {
-    printf("unable to allocate bgr frame!\n");
-    return;
-  }
+  // /* We'll convert the image from YUV/JPEG to BGR, so allocate space */
+  // bgr = uvc_allocate_frame(frame->width * frame->height * 3);
+  // if (!bgr) {
+  //   printf("unable to allocate bgr frame!\n");
+  //   return;
+  // }
 
-  printf("callback! frame_format = %d, width = %d, height = %d, length = %lu, ptr = %d\n",
-    frame->frame_format, frame->width, frame->height, frame->data_bytes, (int) ptr);
+  // printf("callback! frame_format = %d, width = %d, height = %d, length = %lu, ptr = %d\n",
+  //   frame->frame_format, frame->width, frame->height, frame->data_bytes, (int) ptr);
 
-  switch (frame->frame_format) {
-  case UVC_FRAME_FORMAT_H264:
-    printf("1\n");
-    /* use `ffplay H264_FILE` to play */
-    /* fp = fopen(H264_FILE, "a");
-     * fwrite(frame->data, 1, frame->data_bytes, fp);
-     * fclose(fp); */
-    break;
-  case UVC_COLOR_FORMAT_MJPEG:
-    printf("2\n");
-    /* sprintf(filename, "%d%s", jpeg_count++, MJPEG_FILE);
-     * fp = fopen(filename, "w");
-     * fwrite(frame->data, 1, frame->data_bytes, fp);
-     * fclose(fp); */
-    break;
-  case UVC_COLOR_FORMAT_YUYV:
-    printf("3\n");
-    /* Do the BGR conversion */
-    ret = uvc_any2bgr(frame, bgr);
-    if (ret) {
-      uvc_perror(ret, "uvc_any2bgr");
-      uvc_free_frame(bgr);
-      return;
-    }
-    break;
-  default:
-    printf("4\n");
-    break;
-  }
+  // switch (frame->frame_format) {
+  // case UVC_FRAME_FORMAT_H264:
+  //   printf("1\n");
+  //   /* use `ffplay H264_FILE` to play */
+  //   /* fp = fopen(H264_FILE, "a");
+  //    * fwrite(frame->data, 1, frame->data_bytes, fp);
+  //    * fclose(fp); */
+  //   break;
+  // case UVC_COLOR_FORMAT_MJPEG:
+  //   printf("2\n");
+  //   /* sprintf(filename, "%d%s", jpeg_count++, MJPEG_FILE);
+  //    * fp = fopen(filename, "w");
+  //    * fwrite(frame->data, 1, frame->data_bytes, fp);
+  //    * fclose(fp); */
+  //   break;
+  // case UVC_COLOR_FORMAT_YUYV:
+  //   printf("3\n");
+  //   /* Do the BGR conversion */
+  //   ret = uvc_any2bgr(frame, bgr);
+  //   if (ret) {
+  //     uvc_perror(ret, "uvc_any2bgr");
+  //     uvc_free_frame(bgr);
+  //     return;
+  //   }
+  //   break;
+  // default:
+  //   printf("4\n");
+  //   break;
+  // }
 
-  if (frame->sequence % 30 == 0) {
-    printf(" * got image %u\n",  frame->sequence);
-  }
+  // if (frame->sequence % 30 == 0) {
+  //   printf(" * got image %u\n",  frame->sequence);
+  // }
 
-  /* Call a user function:
-   *
-   * my_type *my_obj = (*my_type) ptr;
-   * my_user_function(ptr, bgr);
-   * my_other_function(ptr, bgr->data, bgr->width, bgr->height);
-   */
+  // /* Call a user function:
+  //  *
+  //  * my_type *my_obj = (*my_type) ptr;
+  //  * my_user_function(ptr, bgr);
+  //  * my_other_function(ptr, bgr->data, bgr->width, bgr->height);
+  //  */
 
-  /* Call a C++ method:
-   *
-   * my_type *my_obj = (*my_type) ptr;
-   * my_obj->my_func(bgr);
-   */
+  // /* Call a C++ method:
+  //  *
+  //  * my_type *my_obj = (*my_type) ptr;
+  //  * my_obj->my_func(bgr);
+  //  */
 
-  /* Use opencv.highgui to display the image:
-   * 
-   * cvImg = cvCreateImageHeader(
-   *     cvSize(bgr->width, bgr->height),
-   *     IPL_DEPTH_8U,
-   *     3);
-   *
-   * cvSetData(cvImg, bgr->data, bgr->width * 3); 
-   *
-   * cvNamedWindow("Test", CV_WINDOW_AUTOSIZE);
-   * cvShowImage("Test", cvImg);
-   * cvWaitKey(10);
-   *
-   * cvReleaseImageHeader(&cvImg);
-   */
+  // /* Use opencv.highgui to display the image:
+  //  * 
+  //  * cvImg = cvCreateImageHeader(
+  //  *     cvSize(bgr->width, bgr->height),
+  //  *     IPL_DEPTH_8U,
+  //  *     3);
+  //  *
+  //  * cvSetData(cvImg, bgr->data, bgr->width * 3); 
+  //  *
+  //  * cvNamedWindow("Test", CV_WINDOW_AUTOSIZE);
+  //  * cvShowImage("Test", cvImg);
+  //  * cvWaitKey(10);
+  //  *
+  //  * cvReleaseImageHeader(&cvImg);
+  //  */
 
-  uvc_free_frame(bgr);
+  // uvc_free_frame(bgr);
 }
 
 int main(int argc, char **argv) {
@@ -116,16 +117,16 @@ int main(int argc, char **argv) {
   puts("UVC initialized");
 
   // google
-  // /* Locates the first attached UVC device, stores in dev */
-  // res = uvc_find_device(
-  //     ctx, &dev,
-  //     6353, 20510, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
-
-  // aver
   /* Locates the first attached UVC device, stores in dev */
   res = uvc_find_device(
       ctx, &dev,
-      1994, 4371, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+      6353, 20510, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+
+  // // // aver
+  // /* Locates the first attached UVC device, stores in dev */
+  // res = uvc_find_device(
+  //     ctx, &dev,
+  //     1994, 4371, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
 
 
   if (res < 0) {
