@@ -40,26 +40,9 @@
 #include "libuvc/libuvc_internal.h"
 #include "errno.h"
 
-#include <stdarg.h>
-void dgnetP_streamC(char *format, ...){
-
-    FILE * pFile;
-    pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
-
-    va_list args;
-    va_start(args, format);
-    vfprintf(pFile, format, args);
-    va_end(args);  
-    fclose(pFile);
-}
-//dgnetP_sreamC("stream.c ::: function_name() ::: %s \n", "message");
-
-
 #ifdef _MSC_VER
 
 #define DELTA_EPOCH_IN_MICROSECS  116444736000000000Ui64
-
-
 
 // gettimeofday - get time of day for Windows;
 // A gettimeofday implementation for Microsoft Windows;
@@ -120,9 +103,10 @@ struct format_table_entry *_get_format_entry(enum uvc_frame_format format) {
     ABS_FMT(UVC_FRAME_FORMAT_ANY, 2,
       {UVC_FRAME_FORMAT_UNCOMPRESSED, UVC_FRAME_FORMAT_COMPRESSED})
 
-    ABS_FMT(UVC_FRAME_FORMAT_UNCOMPRESSED, 6,
+    ABS_FMT(UVC_FRAME_FORMAT_UNCOMPRESSED, 8,
       {UVC_FRAME_FORMAT_YUYV, UVC_FRAME_FORMAT_UYVY, UVC_FRAME_FORMAT_GRAY8,
-      UVC_FRAME_FORMAT_GRAY16, UVC_FRAME_FORMAT_NV12, UVC_FRAME_FORMAT_BGR})
+       UVC_FRAME_FORMAT_GRAY16, UVC_FRAME_FORMAT_NV12, UVC_FRAME_FORMAT_P010,
+       UVC_FRAME_FORMAT_BGR, UVC_FRAME_FORMAT_RGB})
     FMT(UVC_FRAME_FORMAT_YUYV,
       {'Y',  'U',  'Y',  '2', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_UYVY,
@@ -133,8 +117,12 @@ struct format_table_entry *_get_format_entry(enum uvc_frame_format format) {
       {'Y',  '1',  '6',  ' ', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_NV12,
       {'N',  'V',  '1',  '2', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
+    FMT(UVC_FRAME_FORMAT_P010,
+      {'P',  '0',  '1',  '0', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_BGR,
       {0x7d, 0xeb, 0x36, 0xe4, 0x4f, 0x52, 0xce, 0x11, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70})
+    FMT(UVC_FRAME_FORMAT_RGB,
+        {0x7e, 0xeb, 0x36, 0xe4, 0x4f, 0x52, 0xce, 0x11, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70})
     FMT(UVC_FRAME_FORMAT_BY8,
       {'B',  'Y',  '8',  ' ', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_BA81,
@@ -784,19 +772,22 @@ void _uvc_process_payload(uvc_stream_handle_t *strmh, uint8_t *payload, size_t p
       variable_offset += 6;
     }
 
-    if (header_len > variable_offset)
-    {
+    if (header_len > variable_offset) {
         // Metadata is attached to header
-        memcpy(strmh->meta_outbuf + strmh->meta_got_bytes, payload + variable_offset, header_len - variable_offset);
-        strmh->meta_got_bytes += header_len - variable_offset;
+        size_t meta_len = header_len - variable_offset;
+        if (strmh->meta_got_bytes + meta_len > LIBUVC_XFER_META_BUF_SIZE)
+          meta_len = LIBUVC_XFER_META_BUF_SIZE - strmh->meta_got_bytes; /* Avoid overflow. */
+        memcpy(strmh->meta_outbuf + strmh->meta_got_bytes, payload + variable_offset, meta_len);
+        strmh->meta_got_bytes += meta_len;
     }
   }
 
   if (data_len > 0) {
+    if (strmh->got_bytes + data_len > strmh->cur_ctrl.dwMaxVideoFrameSize)
+      data_len = strmh->cur_ctrl.dwMaxVideoFrameSize - strmh->got_bytes; /* Avoid overflow. */
     memcpy(strmh->outbuf + strmh->got_bytes, payload + header_len, data_len);
     strmh->got_bytes += data_len;
-
-    if (header_info & (1 << 1)) {
+    if (header_info & (1 << 1) || strmh->got_bytes == strmh->cur_ctrl.dwMaxVideoFrameSize) {
       /* The EOF bit is set, so publish the complete frame */
       _uvc_swap_buffers(strmh);
     }
@@ -1019,9 +1010,6 @@ uvc_error_t uvc_stream_open_ctrl(uvc_device_handle_t *devh, uvc_stream_handle_t 
 
   UVC_ENTER();
 
-
-  dgnetP_streamC("stream.c ::: uvc_stream_open_ctrl() ::: uvc_stream_open_ctrl: %d \n", ctrl->bInterfaceNumber);
-
   if (_uvc_get_stream_by_interface(devh, ctrl->bInterfaceNumber) != NULL) {
     ret = UVC_ERROR_BUSY; /* Stream is already opened */
     goto fail;
@@ -1041,8 +1029,6 @@ uvc_error_t uvc_stream_open_ctrl(uvc_device_handle_t *devh, uvc_stream_handle_t 
   strmh->devh = devh;
   strmh->stream_if = stream_if;
   strmh->frame.library_owns_data = 1;
-
-  dgnetP_streamC("stream.c ::: uvc_stream_open_ctrl() ::: strmh->stream_if->bInterfaceNumber: %d \n", strmh->stream_if->bInterfaceNumber);
 
   ret = uvc_claim_if(strmh->devh, strmh->stream_if->bInterfaceNumber);
   if (ret != UVC_SUCCESS)
@@ -1107,26 +1093,6 @@ uvc_error_t uvc_stream_start(
 
   ctrl = &strmh->cur_ctrl;
 
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bmHint: %d \n",                    ctrl->bmHint);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bFormatIndex: %d \n",              ctrl->bFormatIndex);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bFrameIndex: %d \n",               ctrl->bFrameIndex);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->dwFrameInterval: %d \n",           ctrl->dwFrameInterval);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->wKeyFrameRate: %d \n",             ctrl->wKeyFrameRate);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->wPFrameRate: %d \n",               ctrl->wPFrameRate);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->wCompQuality: %d \n",              ctrl->wCompQuality);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->wCompWindowSize: %d \n",           ctrl->wCompWindowSize);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->wDelay: %d \n",                    ctrl->wDelay);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->dwMaxVideoFrameSize: %d \n",       ctrl->dwMaxVideoFrameSize);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->dwMaxPayloadTransferSize: %d \n",  ctrl->dwMaxPayloadTransferSize);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->dwClockFrequency: %d \n",          ctrl->dwClockFrequency);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bmFramingInfo: %d \n",             ctrl->bmFramingInfo);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bPreferredVersion: %d \n",         ctrl->bPreferredVersion);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bMinVersion: %d \n",               ctrl->bMinVersion);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bMaxVersion: %d \n",               ctrl->bMaxVersion);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_stream_ctrl ::: ctrl->bInterfaceNumber: %d \n",          ctrl->bInterfaceNumber);
-
-
-
   UVC_ENTER();
 
   if (strmh->running) {
@@ -1145,39 +1111,7 @@ uvc_error_t uvc_stream_start(
     ret = UVC_ERROR_INVALID_PARAM;
     goto fail;
   }
-  
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->bDescriptorSubtype: %d \n",         frame_desc->bDescriptorSubtype);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->bFrameIndex: %d \n",                frame_desc->bFrameIndex);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->bmCapabilities: %d \n",             frame_desc->bmCapabilities);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->wWidth: %d \n",                     frame_desc->wWidth);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->wHeight: %d \n",                    frame_desc->wHeight);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwMinBitRate: %d \n",               frame_desc->dwMinBitRate);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwMaxBitRate: %d \n",               frame_desc->dwMaxBitRate);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwMaxVideoFrameBufferSize: %d \n",  frame_desc->dwMaxVideoFrameBufferSize);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwDefaultFrameInterval: %d \n",     frame_desc->dwDefaultFrameInterval);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwMinFrameInterval: %d \n",         frame_desc->dwMinFrameInterval);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwMaxFrameInterval: %d \n",         frame_desc->dwMaxFrameInterval);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwFrameIntervalStep: %d \n",        frame_desc->dwFrameIntervalStep);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->bFrameIntervalType: %d \n",         frame_desc->bFrameIntervalType);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->dwBytesPerLine: %d \n",             frame_desc->dwBytesPerLine);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_frame_desc ::: frame_desc->intervals: %d \n",                  &frame_desc->intervals);
-
-
   format_desc = frame_desc->parent;
-
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bDescriptorSubtype: %d \n",   format_desc->bDescriptorSubtype);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bFormatIndex: %d \n",         format_desc->bFormatIndex);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bNumFrameDescriptors: %d \n", format_desc->bNumFrameDescriptors);
-  dgnetP_streamC("stream.c :::  uvc_stream_start():uvc_format_desc ::: format_desc->guidFormat: %s \n",           format_desc->guidFormat);
-  //dgnetP_streamC("stream.c :::  uvc_stream_start():uvc_format_desc ::: format_desc->bBitsPerPixel: %s \n",      format_desc->bBitsPerPixel); /** BPP for uncompressed stream */
-  //dgnetP_streamC("stream.c :::  uvc_stream_start():uvc_format_desc ::: format_desc->bmFlags: %s \n",            format_desc->bmFlags); /** Flags for JPEG stream */
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bDefaultFrameIndex: %d \n",   format_desc->bDefaultFrameIndex);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bAspectRatioX: %d \n",        format_desc->bAspectRatioX);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bAspectRatioY: %d \n",        format_desc->bAspectRatioY);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bmInterlaceFlags: %d \n",     format_desc->bmInterlaceFlags);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bCopyProtect: %d \n",         format_desc->bCopyProtect);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): uvc_format_desc ::: format_desc->bVariableSize: %d \n",        format_desc->bVariableSize);
-
 
   strmh->frame_format = uvc_frame_format_for_guid(format_desc->guidFormat);
   if (strmh->frame_format == UVC_FRAME_FORMAT_UNKNOWN) {
@@ -1193,23 +1127,7 @@ uvc_error_t uvc_stream_start(
    * (UVC 1.5: 2.4.3. VideoStreaming Interface) */
   isochronous = interface->num_altsetting > 1;
 
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->num_altsetting: %d \n",                      interface->num_altsetting);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bLength: %d \n",                 interface->altsetting->bLength);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bDescriptorType: %d \n",         interface->altsetting->bDescriptorType);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bInterfaceNumber: %d \n",        interface->altsetting->bInterfaceNumber);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bAlternateSetting: %d \n",       interface->altsetting->bAlternateSetting);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bNumEndpoints: %d \n",           interface->altsetting->bNumEndpoints);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bInterfaceClass: %d \n",         interface->altsetting->bInterfaceClass);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bInterfaceSubClass: %d \n",      interface->altsetting->bInterfaceSubClass);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->bInterfaceProtocol: %d \n",      interface->altsetting->bInterfaceProtocol);
-  dgnetP_streamC("stream.c ::: uvc_stream_start(): libusb_interface ::: interface->altsetting->iInterface: %d \n",              interface->altsetting->iInterface);
-
-
   if (isochronous) {
-
-    
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: ISOCHRONOUS");
-
     /* For isochronous streaming, we choose an appropriate altsetting for the endpoint
      * and set up several transfers */
     const struct libusb_interface_descriptor *altsetting = 0;
@@ -1229,61 +1147,18 @@ uvc_error_t uvc_stream_start(
     /* Go through the altsettings and find one whose packets are at least
      * as big as our format's maximum per-packet usage. Assume that the
      * packet sizes are increasing. */
-
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: Go through the altsettings and find one whose packets are at least\n");
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: as big as our format's maximum per-packet usage. Assume that the\n");
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: packet sizes are increasing.\n");
-    dgnetP_streamC("===========================================\n");
-
     for (alt_idx = 0; alt_idx < interface->num_altsetting; alt_idx++) {
       altsetting = interface->altsetting + alt_idx;
       endpoint_bytes_per_packet = 0;
-
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: For isochronous streaming, we choose an appropriate altsetting for the endpoint \n");
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: and set up several transfers. \n");
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bLength: %d\n",               altsetting->bLength);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bDescriptorType: %d\n",       altsetting->bDescriptorType);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bInterfaceNumber: %d\n",       altsetting->bInterfaceNumber);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bAlternateSetting: %d\n",     altsetting->bAlternateSetting);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bNumEndpoints: %d\n",         altsetting->bNumEndpoints);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bInterfaceClass: %d\n",       altsetting->bInterfaceClass);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bInterfaceSubClass: %d\n",    altsetting->bInterfaceSubClass);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->bInterfaceProtocol: %d\n",    altsetting->bInterfaceProtocol);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->iInterface: %d\n",            altsetting->iInterface);
-      // dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->endpoint: %d\n",           altsetting->endpoint);    // const struct libusb_endpoint_descriptor *endpoint;
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->extra: %s\n",                 altsetting->extra);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_interface_descriptor: altsetting->extra_length: %d\n",          altsetting->extra_length);
-
-
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: =========for (alt_idx = %d; alt_idx < interface->num_altsetting; alt_idx++)========= \n", alt_idx);
-
 
       /* Find the endpoint with the number specified in the VS header */
       for (ep_idx = 0; ep_idx < altsetting->bNumEndpoints; ep_idx++) {
         endpoint = altsetting->endpoint + ep_idx;
 
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: Find the endpoint with the number specified in the VS header \n");
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: ---------for (ep_idx = %d; ep_idx < altsetting->bNumEndpoints; ep_idx++)--------- \n", ep_idx);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bLength: %d \n", endpoint->bLength);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bDescriptorType: %d \n", endpoint->bDescriptorType);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bEndpointAddress: %d \n", endpoint->bEndpointAddress);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bmAttributes: %d \n", endpoint->bmAttributes);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->wMaxPacketSize: %d \n", endpoint->wMaxPacketSize);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bInterval: %d \n", endpoint->bInterval);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bRefresh: %d \n", endpoint->bRefresh);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bSynchAddress: %d \n", endpoint->bSynchAddress);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->extra: %s \n", endpoint->extra);
-        dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_endpoint_descriptor::: endpoint->bLenextra_lengthgth: %d \n", endpoint->extra_length);
-
         struct libusb_ss_endpoint_companion_descriptor *ep_comp = 0;
         libusb_get_ss_endpoint_companion_descriptor(NULL, endpoint, &ep_comp);
         if (ep_comp)
         {
-          dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_ss_endpoint_companion_descriptor::: ep_comp->bLength: %d \n", ep_comp->bLength);
-          dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_ss_endpoint_companion_descriptor::: ep_comp->bDescriptorType: %d \n", ep_comp->bDescriptorType);
-          dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_ss_endpoint_companion_descriptor::: ep_comp->bMaxBurst: %d \n", ep_comp->bMaxBurst);
-          dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_ss_endpoint_companion_descriptor::: ep_comp->bmAttributes: %d \n", ep_comp->bmAttributes);
-          dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_ss_endpoint_companion_descriptor::: ep_comp->wBytesPerInterval: %d \n", ep_comp->wBytesPerInterval);
           endpoint_bytes_per_packet = ep_comp->wBytesPerInterval;
           libusb_free_ss_endpoint_companion_descriptor(ep_comp);
           break;
@@ -1300,11 +1175,6 @@ uvc_error_t uvc_stream_start(
         }
       }
 
-      dgnetP_streamC("---------------------------------------------\n");
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: endpoint_bytes_per_packet (ep_comp->wBytesPerInterval): %d \n", endpoint_bytes_per_packet);
-      dgnetP_streamC("stream.c ::: uvc_stream_start()::: config_bytes_per_packet (strmh->cur_ctrl.dwMaxPayloadTransferSize): %d \n", config_bytes_per_packet);
-
-
       if (endpoint_bytes_per_packet >= config_bytes_per_packet) {
         /* Transfers will be at most one frame long: Divide the maximum frame size
          * by the size of the endpoint and round up */
@@ -1320,20 +1190,11 @@ uvc_error_t uvc_stream_start(
       }
     }
 
-
-    dgnetP_streamC("===========================================\n");
-    dgnetP_streamC("===========================================\n");
-
-    
     /* If we searched through all the altsettings and found nothing usable */
     if (alt_idx == interface->num_altsetting) {
       ret = UVC_ERROR_INVALID_MODE;
       goto fail;
     }
-
-
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_set_interface_alt_setting()::: altsetting->bInterfaceNumber: %d \n", altsetting->bInterfaceNumber);
-    dgnetP_streamC("stream.c ::: uvc_stream_start()::: libusb_set_interface_alt_setting()::: altsetting->bAlternateSetting: %d \n", altsetting->bAlternateSetting);
 
     /* Select the altsetting */
     ret = libusb_set_interface_alt_setting(strmh->devh->usb_devh,
@@ -1344,21 +1205,11 @@ uvc_error_t uvc_stream_start(
       goto fail;
     }
 
-
     /* Set up the transfers */
     for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS; ++transfer_id) {
-    
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: -----------Set up the transfers-----------\n");
-
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: packets_per_transfer : %d \n", packets_per_transfer);
-
       transfer = libusb_alloc_transfer(packets_per_transfer);
       strmh->transfers[transfer_id] = transfer;      
       strmh->transfer_bufs[transfer_id] = malloc(total_transfer_size);
-
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: ibusb_fill_iso_transfer() CALL \n");
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: transfer_id : %d \n",         transfer_id);
-      dgnetP_streamC("stream.c ::: uvc_stream_start() ::: total_transfer_size : %d \n", total_transfer_size);
 
       libusb_fill_iso_transfer(
         transfer, strmh->devh->usb_devh, format_desc->parent->bEndpointAddress,
@@ -1367,8 +1218,6 @@ uvc_error_t uvc_stream_start(
 
       libusb_set_iso_packet_lengths(transfer, endpoint_bytes_per_packet);
     }
-    dgnetP_streamC("stream.c ::: uvc_stream_start() ::: ----END-------Set up the transfers-----------\n");
-
   } else {
     for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS;
         ++transfer_id) {
@@ -1391,15 +1240,11 @@ uvc_error_t uvc_stream_start(
    * with the contents of each frame.
    */
   if (cb) {
-    dgnetP_streamC("stream.c ::: uvc_stream_start() ::: !!! cb pthread_create \n");
     pthread_create(&strmh->cb_thread, NULL, _uvc_user_caller, (void*) strmh);
   }
 
-  dgnetP_streamC("stream.c ::: uvc_stream_start() ::: LIBUVC_NUM_TRANSFER_BUFS: %d \n", LIBUVC_NUM_TRANSFER_BUFS);
-
   for (transfer_id = 0; transfer_id < LIBUVC_NUM_TRANSFER_BUFS;
       transfer_id++) {
-    dgnetP_streamC("stream.c ::: uvc_stream_start() ::: transfer_id: %d \n", transfer_id);    
     ret = libusb_submit_transfer(strmh->transfers[transfer_id]);
     if (ret != UVC_SUCCESS) {
       UVC_DEBUG("libusb_submit_transfer failed: %d",ret);
@@ -1507,6 +1352,9 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   case UVC_FRAME_FORMAT_NV12:
     frame->step = frame->width;
     break;
+  case UVC_FRAME_FORMAT_P010:
+    frame->step = frame->width * 2;
+        break;
   case UVC_FRAME_FORMAT_MJPEG:
     frame->step = 0;
     break;
@@ -1651,15 +1499,12 @@ uvc_error_t uvc_stream_stop(uvc_stream_handle_t *strmh) {
 
   pthread_mutex_lock(&strmh->cb_mutex);
 
+  /* Attempt to cancel any running transfers, we can't free them just yet because they aren't
+   *   necessarily completed but they will be free'd in _uvc_stream_callback().
+   */
   for(i=0; i < LIBUVC_NUM_TRANSFER_BUFS; i++) {
-    if(strmh->transfers[i] != NULL) {
-      int res = libusb_cancel_transfer(strmh->transfers[i]);
-      if(res < 0 && res != LIBUSB_ERROR_NOT_FOUND ) {
-        free(strmh->transfers[i]->buffer);
-        libusb_free_transfer(strmh->transfers[i]);
-        strmh->transfers[i] = NULL;
-      }
-    }
+    if(strmh->transfers[i] != NULL)
+      libusb_cancel_transfer(strmh->transfers[i]);
   }
 
   /* Wait for transfers to complete/cancel */

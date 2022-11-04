@@ -38,23 +38,6 @@
 
 #include "libuvc/libuvc.h"
 #include "libuvc/libuvc_internal.h"
-#include <libusb.h>
-
-
-#include <stdarg.h>
-void dgnetP_deviceC(char *format, ...){
-
-    FILE * pFile;
-    pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
-
-    va_list args;
-    va_start(args, format);
-    vfprintf(pFile, format, args);
-    va_end(args);  
-    fclose(pFile);
-}
-//dgnetP_deviceC("device.c ::: function_name() ::: %s \n", "message");
-
 
 int uvc_already_open(uvc_context_t *ctx, struct libusb_device *usb_dev);
 void uvc_free_devh(uvc_device_handle_t *devh);
@@ -149,7 +132,6 @@ uvc_error_t uvc_find_device(
 
   uvc_device_t **list;
   uvc_device_t *test_dev;
-
   int dev_idx;
   int found_dev;
 
@@ -165,16 +147,11 @@ uvc_error_t uvc_find_device(
   dev_idx = 0;
   found_dev = 0;
 
-  dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "1");
-
   while (!found_dev && (test_dev = list[dev_idx++]) != NULL) {
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "2");
     uvc_device_descriptor_t *desc;
 
     if (uvc_get_device_descriptor(test_dev, &desc) != UVC_SUCCESS)
       continue;
- 
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: test_dev->ref: %d \n", test_dev->ref); 
 
     if ((!vid || desc->idVendor == vid)
         && (!pid || desc->idProduct == pid)
@@ -184,28 +161,19 @@ uvc_error_t uvc_find_device(
     uvc_free_device_descriptor(desc);
   }
 
-
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "3");
-
-
   if (found_dev)
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "4");
     uvc_ref_device(test_dev);
 
   uvc_free_device_list(list, 1);
 
   if (found_dev) {
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: test_dev->ref:%d \n", test_dev->ref);
-    dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "5");
     *dev = test_dev;
-    //dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s; dev->ref: %d \n", "6", &(&(&dev->ref)));
     UVC_EXIT(UVC_SUCCESS);
     return UVC_SUCCESS;
   } else {
     UVC_EXIT(UVC_ERROR_NO_DEVICE);
     return UVC_ERROR_NO_DEVICE;
   }
-  dgnetP_deviceC("device.c ::: uvc_find_device() ::: %s \n", "999");
 }
 
 /** @brief Finds all cameras identified by vendor, product and/or serial number
@@ -353,20 +321,7 @@ uvc_error_t uvc_open(
 
   UVC_ENTER();
 
-
-  dgnetP_deviceC("device.c ::: uvc_open() ::: dev->ref: %d \n", dev->ref);
-
-
-  //ret = libusb_open(dev->usb_dev, &usb_devh);
-
-  usb_devh = libusb_open_device_with_vid_pid(NULL, 0x046d, 0x0825);
-
-	if (!usb_devh) {
-		dgnetP_deviceC("device.c ::: uvc_open() Error: %s \n", "!usb_devh");
-	}
-
-  //dgnetP_deviceC("device.c ::: uvc_open() ::: usb_devh->dev->bus_number: %d \n", usb_devh->claimed_interfaces);
-
+  ret = libusb_open(dev->usb_dev, &usb_devh);
   UVC_DEBUG("libusb_open() = %d", ret);
 
   if (ret != UVC_SUCCESS) {
@@ -377,7 +332,6 @@ uvc_error_t uvc_open(
   ret = uvc_open_internal(dev, usb_devh, devh);
   UVC_EXIT(ret);
   return ret;
-
 }
 
 static uvc_error_t uvc_open_internal(
@@ -396,27 +350,15 @@ static uvc_error_t uvc_open_internal(
   internal_devh->dev = dev;
   internal_devh->usb_devh = usb_devh;
 
-
-  dgnetP_deviceC("device.c ::: uvc_open_internal:  internal_devh->dev->ref: %d \n", internal_devh->dev->ref);
-
   ret = uvc_get_device_info(internal_devh, &(internal_devh->info));
 
   if (ret != UVC_SUCCESS)
     goto fail;
 
   UVC_DEBUG("claiming control interface %d", internal_devh->info->ctrl_if.bInterfaceNumber);
-
-  dgnetP_deviceC("device.c ::: uvc_open_internal: uvc_device_handle_t: internal_devh->info->ctrl_if.bInterfaceNumber: %d \n", internal_devh->info->ctrl_if.bInterfaceNumber);
-  dgnetP_deviceC("device.c ::: uvc_open_internal: uvc_device_handle_t: internal_devh->info->ctrl_if.bcdUVC: %d \n", internal_devh->info->ctrl_if.bcdUVC);
-  dgnetP_deviceC("device.c ::: uvc_open_internal: uvc_device_handle_t: internal_devh->info->ctrl_if.dwClockFrequency: %d \n", internal_devh->info->ctrl_if.dwClockFrequency);
-  dgnetP_deviceC("device.c ::: uvc_open_internal: uvc_device_handle_t: internal_devh->info->ctrl_if.bEndpointAddress: %d \n", internal_devh->info->ctrl_if.bEndpointAddress);
-
-
   ret = uvc_claim_if(internal_devh, internal_devh->info->ctrl_if.bInterfaceNumber);
   if (ret != UVC_SUCCESS)
     goto fail;
-
-
 
   libusb_get_device_descriptor(dev->usb_dev, &desc);
   internal_devh->is_isight = (desc.idVendor == 0x05ac && desc.idProduct == 0x8501);
@@ -649,9 +591,6 @@ static uvc_error_t get_device_descriptor(
 uvc_error_t uvc_get_device_descriptor(
     uvc_device_t *dev,
     uvc_device_descriptor_t **desc) {
-
-dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: dev->ref: %d \n", dev->ref);   
-
   uvc_device_descriptor_t *desc_internal;
   struct libusb_device_descriptor usb_desc;
   struct libusb_device_handle *usb_devh;
@@ -661,7 +600,6 @@ dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: dev->ref: %d \n", d
 
   ret = libusb_get_device_descriptor(dev->usb_dev, &usb_desc);
 
-
   if (ret != UVC_SUCCESS) {
     UVC_EXIT(ret);
     return ret;
@@ -670,24 +608,6 @@ dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: dev->ref: %d \n", d
   desc_internal = calloc(1, sizeof(*desc_internal));
   desc_internal->idVendor = usb_desc.idVendor;
   desc_internal->idProduct = usb_desc.idProduct;
-
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: %s \n", "start: libusb_device_descriptor structure");   
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bLength:%d \n",             usb_desc.bLength);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bDescriptorType:%d \n",     usb_desc.bDescriptorType);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bcdUSB:%d \n",              usb_desc.bcdUSB);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bDeviceClass:%d \n",        usb_desc.bDeviceClass);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bDeviceSubClass:%d \n",     usb_desc.bDeviceSubClass);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bDeviceProtocol:%d \n",     usb_desc.bDeviceProtocol);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bMaxPacketSize0:%d \n",     usb_desc. bMaxPacketSize0);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: idVendor:%d \n",            usb_desc.idVendor);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: idProduct:%d \n",           usb_desc.idProduct);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bcdDevice:%d \n",           usb_desc.bcdDevice);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: iManufacturer:%d \n",       usb_desc.iManufacturer);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: iProduct:%d \n",            usb_desc.iProduct);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: iSerialNumber:%d \n",       usb_desc.iSerialNumber);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: bNumConfigurations:%d \n",  usb_desc.bNumConfigurations);
-  dgnetP_deviceC("device.c ::: uvc_get_device_descriptor() ::: %s \n", "end: libusb_device_descriptor structure");
-
 
   if (libusb_open(dev->usb_dev, &usb_devh) == 0) {
     unsigned char buf[64];
@@ -1063,9 +983,6 @@ uvc_error_t uvc_claim_if(uvc_device_handle_t *devh, int idx) {
 
   /* Tell libusb to detach any active kernel drivers. libusb will keep track of whether
    * it found a kernel driver for this interface. */
-
-  dgnetP_deviceC("device.c ::: uvc_claim_if(): idx: %d\n", idx);
-
   ret = libusb_detach_kernel_driver(devh->usb_devh, idx);
 
   if (ret == UVC_SUCCESS || ret == LIBUSB_ERROR_NOT_FOUND || ret == LIBUSB_ERROR_NOT_SUPPORTED) {

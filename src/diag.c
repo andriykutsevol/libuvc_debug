@@ -39,23 +39,6 @@
 #include "libuvc/libuvc.h"
 #include "libuvc/libuvc_internal.h"
 
-
-#include <stdarg.h>
-void dgnetP_diagC(char *format, ...){
-
-    FILE * pFile;
-    pFile = fopen ("/home/dgnet/build/results/libuvc_out.txt","a");
-
-    va_list args;
-    va_start(args, format);
-    vfprintf(pFile, format, args);
-    va_end(args);  
-    fclose(pFile);
-}
-//dgnetP_diagC("diag.c ::: function_name() ::: %s \n", "message");
-
-
-
 /** @internal */
 typedef struct _uvc_error_msg {
   uvc_error_t err;
@@ -124,33 +107,18 @@ void uvc_print_stream_ctrl(uvc_stream_ctrl_t *ctrl, FILE *stream) {
   if (stream == NULL)
     stream = stderr;
 
-
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: bmHint: %04x\n", ctrl->bmHint);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: bFormatIndex: %d\n", ctrl->bFormatIndex);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: bFrameIndex: %d\n", ctrl->bFrameIndex);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: dwFrameInterval: %u\n", ctrl->dwFrameInterval);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: wKeyFrameRate: %d\n", ctrl->wKeyFrameRate);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: wPFrameRate: %d\n", ctrl->wPFrameRate);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: wCompQuality: %d\n", ctrl->wCompQuality);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: wCompWindowSize: %d\n", ctrl->wCompWindowSize);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: wDelay: %d\n", ctrl->wDelay);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: dwMaxVideoFrameSize: %u\n", ctrl->dwMaxVideoFrameSize);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: dwMaxPayloadTransferSize: %u\n", ctrl->dwMaxPayloadTransferSize);
-  dgnetP_diagC("example.c ::: uvc_print_stream_ctrl() ::: bInterfaceNumber: %d\n", ctrl->bInterfaceNumber);
-
-
-  // fprintf(stream, "bmHint: %04x\n", ctrl->bmHint);
-  // fprintf(stream, "bFormatIndex: %d\n", ctrl->bFormatIndex);
-  // fprintf(stream, "bFrameIndex: %d\n", ctrl->bFrameIndex);
-  // fprintf(stream, "dwFrameInterval: %u\n", ctrl->dwFrameInterval);
-  // fprintf(stream, "wKeyFrameRate: %d\n", ctrl->wKeyFrameRate);
-  // fprintf(stream, "wPFrameRate: %d\n", ctrl->wPFrameRate);
-  // fprintf(stream, "wCompQuality: %d\n", ctrl->wCompQuality);
-  // fprintf(stream, "wCompWindowSize: %d\n", ctrl->wCompWindowSize);
-  // fprintf(stream, "wDelay: %d\n", ctrl->wDelay);
-  // fprintf(stream, "dwMaxVideoFrameSize: %u\n", ctrl->dwMaxVideoFrameSize);
-  // fprintf(stream, "dwMaxPayloadTransferSize: %u\n", ctrl->dwMaxPayloadTransferSize);
-  // fprintf(stream, "bInterfaceNumber: %d\n", ctrl->bInterfaceNumber);
+  fprintf(stream, "bmHint: %04x\n", ctrl->bmHint);
+  fprintf(stream, "bFormatIndex: %d\n", ctrl->bFormatIndex);
+  fprintf(stream, "bFrameIndex: %d\n", ctrl->bFrameIndex);
+  fprintf(stream, "dwFrameInterval: %u\n", ctrl->dwFrameInterval);
+  fprintf(stream, "wKeyFrameRate: %d\n", ctrl->wKeyFrameRate);
+  fprintf(stream, "wPFrameRate: %d\n", ctrl->wPFrameRate);
+  fprintf(stream, "wCompQuality: %d\n", ctrl->wCompQuality);
+  fprintf(stream, "wCompWindowSize: %d\n", ctrl->wCompWindowSize);
+  fprintf(stream, "wDelay: %d\n", ctrl->wDelay);
+  fprintf(stream, "dwMaxVideoFrameSize: %u\n", ctrl->dwMaxVideoFrameSize);
+  fprintf(stream, "dwMaxPayloadTransferSize: %u\n", ctrl->dwMaxPayloadTransferSize);
+  fprintf(stream, "bInterfaceNumber: %d\n", ctrl->bInterfaceNumber);
 }
 
 static const char *_uvc_name_for_format_subtype(uint8_t subtype) {
