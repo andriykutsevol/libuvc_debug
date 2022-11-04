@@ -3,6 +3,9 @@
 #include <unistd.h>
 
 
+int fdnum_yuv;
+int fdnum_bgr;
+
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
@@ -10,6 +13,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
 
   uvc_frame_t *bgr;
   uvc_error_t ret;
+
   enum uvc_frame_format *frame_format = (enum uvc_frame_format *)ptr;
   /* FILE *fp;
    * static int jpeg_count = 0;
@@ -51,6 +55,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
     //   uvc_free_frame(bgr);
     //   return;
     // }
+    write(fdnum_yuv, frame->data, frame->data_bytes);
     break;
   default:
     printf("4\n");
@@ -100,9 +105,9 @@ int main(int argc, char **argv) {
   uvc_stream_ctrl_t ctrl;
   uvc_error_t res;
 
+  FILE* h_yuv = fopen("./out.yuv", "a+");
+  fdnum_yuv = fileno(h_yuv);
 
-  // FILE* h_yuv = fopen("./out.yuv", "a+");
-  // fdnum_yuv = fileno(h_yuv);  
 
   /* Initialize a UVC service context. Libuvc will set up its own libusb
    * context. Replace NULL with a libusb_context pointer to run libuvc
