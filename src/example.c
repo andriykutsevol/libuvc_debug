@@ -121,17 +121,17 @@ int main(int argc, char **argv) {
 
   puts("UVC initialized");
 
-  // google
-  /* Locates the first attached UVC device, stores in dev */
-  res = uvc_find_device(
-      ctx, &dev,
-      6353, 20510, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
-
-  // // // aver
+  // // google
   // /* Locates the first attached UVC device, stores in dev */
   // res = uvc_find_device(
   //     ctx, &dev,
-  //     1994, 4371, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+  //     6353, 20510, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+
+  // // aver
+  /* Locates the first attached UVC device, stores in dev */
+  res = uvc_find_device(
+      ctx, &dev,
+      1994, 4371, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
 
 
   if (res < 0) {
