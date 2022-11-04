@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
@@ -27,18 +28,21 @@ void cb(uvc_frame_t *frame, void *ptr) {
 
   switch (frame->frame_format) {
   case UVC_FRAME_FORMAT_H264:
+    printf("1\n");
     /* use `ffplay H264_FILE` to play */
     /* fp = fopen(H264_FILE, "a");
      * fwrite(frame->data, 1, frame->data_bytes, fp);
      * fclose(fp); */
     break;
   case UVC_COLOR_FORMAT_MJPEG:
+    printf("2\n");
     /* sprintf(filename, "%d%s", jpeg_count++, MJPEG_FILE);
      * fp = fopen(filename, "w");
      * fwrite(frame->data, 1, frame->data_bytes, fp);
      * fclose(fp); */
     break;
   case UVC_COLOR_FORMAT_YUYV:
+    printf("3\n");
     /* Do the BGR conversion */
     ret = uvc_any2bgr(frame, bgr);
     if (ret) {
@@ -48,6 +52,7 @@ void cb(uvc_frame_t *frame, void *ptr) {
     }
     break;
   default:
+    printf("4\n");
     break;
   }
 
@@ -93,6 +98,10 @@ int main(int argc, char **argv) {
   uvc_device_handle_t *devh;
   uvc_stream_ctrl_t ctrl;
   uvc_error_t res;
+
+
+  // FILE* h_yuv = fopen("./out.yuv", "a+");
+  // fdnum_yuv = fileno(h_yuv);  
 
   /* Initialize a UVC service context. Libuvc will set up its own libusb
    * context. Replace NULL with a libusb_context pointer to run libuvc
