@@ -1,6 +1,7 @@
 #include "libuvc/libuvc.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>  // for strtol
 
 
 int fdnum_yuv;
@@ -121,6 +122,14 @@ int main(int argc, char **argv) {
 
   puts("UVC initialized");
 
+  long vidi;
+  long pidi;
+  char* tmpptr;
+
+  vidi = strtol(argv[1],tmpptr,10);
+  pidi = strtol(argv[2],tmpptr,10);
+
+
   // // google
   // res = uvc_find_device(
   //     ctx, &dev,
@@ -135,7 +144,7 @@ int main(int argc, char **argv) {
   /* Locates the first attached UVC device, stores in dev */
     res = uvc_find_device(
       ctx, &dev,
-      0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+      vidi, pidi, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
 
 
   if (res < 0) {
