@@ -164,8 +164,23 @@ int main(int argc, char **argv) {
        * knows about the device */
       uvc_print_diag(devh, stderr);
 
+
+      //-------------------------------
+
       const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
+
+      // Guvcview: "Camera Output: NV12, YUYV, RGB3, BGR3 ... etc"
+      format_desc = format_desc->next;
+
+      //-------------------------------
+
       const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;
+
+      // Guvcview: "Rrsolution"
+      // frame_desc = frame_desc->next;
+
+      //-------------------------------
+
       enum uvc_frame_format frame_format;
       int width = 640;
       int height = 480;
