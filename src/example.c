@@ -169,8 +169,10 @@ int main(int argc, char **argv) {
 
       const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
 
-      // Guvcview: "Camera Output: NV12, YUYV, RGB3, BGR3 ... etc"
-      format_desc = format_desc->next;
+      if (pidi == 4371){
+        // Guvcview: "Camera Output: NV12, YUYV, RGB3, BGR3 ... etc"
+        format_desc = format_desc->next;
+      }
 
       //-------------------------------
 
