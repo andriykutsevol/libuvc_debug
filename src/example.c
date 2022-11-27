@@ -7,6 +7,18 @@
 int fdnum_yuv;
 int fdnum_bgr;
 
+
+long vidi;
+long pidi;
+char* tmpptr;
+
+
+unsigned int width_p;
+unsigned int height_p;
+int fmt_index;
+int frame_index;
+
+
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
@@ -106,7 +118,7 @@ int main(int argc, char **argv) {
   uvc_stream_ctrl_t ctrl;
   uvc_error_t res;
 
-  FILE* h_yuv = fopen("./out.yuv", "a+");
+  FILE* h_yuv = fopen("./out", "a+");
   fdnum_yuv = fileno(h_yuv);
 
 
@@ -122,12 +134,12 @@ int main(int argc, char **argv) {
 
   puts("UVC initialized");
 
-  long vidi;
-  long pidi;
-  char* tmpptr;
 
   vidi = strtol(argv[1],tmpptr,10);
   pidi = strtol(argv[2],tmpptr,10);
+
+  fmt_index = strtol(argv[3],tmpptr,10);
+  frame_index = strtol(argv[4],tmpptr,10);
 
 
   // // google
@@ -169,8 +181,9 @@ int main(int argc, char **argv) {
 
       const uvc_format_desc_t *format_desc = uvc_get_format_descs(devh);
 
-      if (pidi == 4371){
+      while(fmt_index-- >0){
         // Guvcview: "Camera Output: NV12, YUYV, RGB3, BGR3 ... etc"
+        printf("FMT_INDEX: %d\n", fmt_index);
         format_desc = format_desc->next;
       }
 
@@ -178,8 +191,11 @@ int main(int argc, char **argv) {
 
       const uvc_frame_desc_t *frame_desc = format_desc->frame_descs;
 
-      // Guvcview: "Rrsolution"
-      // frame_desc = frame_desc->next;
+      while(frame_index-- >0){
+        // Guvcview: "Rrsolution"
+        printf("FRAME_INDEX: %d\n", frame_index);
+        frame_desc = frame_desc->next;
+      }
 
       //-------------------------------
 
@@ -206,7 +222,7 @@ int main(int argc, char **argv) {
         fps = 10000000 / frame_desc->dwDefaultFrameInterval;
       }
 
-      printf("\nFirst format: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
+      printf("\nFormat: (%4s) %dx%d %dfps\n", format_desc->fourccFormat, width, height, fps);
 
       /* Try to negotiate first stream profile */
       res = uvc_get_stream_ctrl_format_size(
