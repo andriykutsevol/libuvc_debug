@@ -23,7 +23,7 @@ endif()
 
 option(BUILD_EXAMPLE "Build example program" ON)
 option(BUILD_TEST "Build test program" OFF)
-option(ENABLE_UVC_DEBUGGING "Enable UVC debugging" OFF)
+option(ENABLE_UVC_DEBUGGING "Enable UVC debugging" ON)
 
 set(libuvc_DESCRIPTION "A cross-platform library for USB video devices")
 set(libuvc_URL "https://github.com/libuvc/libuvc")
