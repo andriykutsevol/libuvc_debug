@@ -19,6 +19,28 @@ int fmt_index;
 int frame_index;
 
 
+
+//------------------------------------------------------
+//------------------------------------------------------
+#include <stdarg.h>
+
+void dgnetP_example_c(char *format, ...);
+
+void dgnetP_example_c(char *format, ...){
+
+  FILE * pFile;
+  pFile = fopen ("/home/dgnet/libusb/uvc_out.txt","a");
+
+  va_list args;
+  va_start(args, format);
+  vfprintf(pFile, format, args);
+  va_end(args);  
+  fclose(pFile);
+}
+//------------------------------------------------------
+
+
+
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
@@ -120,6 +142,10 @@ int main(int argc, char **argv) {
 
   FILE* h_yuv = fopen("./out", "a+");
   fdnum_yuv = fileno(h_yuv);
+
+
+
+  dgnetP_example_c("zzzzzzzzzzzzzzzzzzzzz\n");
 
 
   /* Initialize a UVC service context. Libuvc will set up its own libusb
