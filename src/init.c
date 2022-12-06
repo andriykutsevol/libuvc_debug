@@ -128,7 +128,7 @@ void *_uvc_handle_events(void *arg) {
  */
 uvc_error_t uvc_init(uvc_context_t **pctx, struct libusb_context *usb_ctx) {
 
-  dgnetP_init_c("uvc_init()\n")
+  dgnetP_init_c("uvc_init()\n");
 
 
   uvc_error_t ret = UVC_SUCCESS;
@@ -136,7 +136,7 @@ uvc_error_t uvc_init(uvc_context_t **pctx, struct libusb_context *usb_ctx) {
 
   if (usb_ctx == NULL) {
 
-    dgnetP_init_c("uvc_init: libusb_init()\n")
+    dgnetP_init_c("uvc_init: libusb_init()\n");
 
     ret = libusb_init(&ctx->usb_ctx);
     ctx->own_usb_ctx = 1;
