@@ -28,6 +28,9 @@ void dgnetP_example_c(char *format, ...);
 
 void dgnetP_example_c(char *format, ...){
 
+
+  printf("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
+
   FILE * pFile;
   pFile = fopen ("/home/dgnet/libusb/uvc_out.txt","a");
 
@@ -36,6 +39,7 @@ void dgnetP_example_c(char *format, ...){
   vfprintf(pFile, format, args);
   va_end(args);  
   fclose(pFile);
+
 }
 //------------------------------------------------------
 
