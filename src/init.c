@@ -78,6 +78,31 @@ YUV stream from a UVC device such as a standard webcam.
 #include "libuvc/libuvc.h"
 #include "libuvc/libuvc_internal.h"
 
+
+
+
+//------------------------------------------------------
+//------------------------------------------------------
+#include <stdarg.h>
+
+void dgnetP_init_c(char *format, ...);
+
+void dgnetP_init_c(char *format, ...){
+
+  FILE * pFile;
+  pFile = fopen ("/home/dgnet/libusb/uvc_out.txt","a");
+
+  va_list args;
+  va_start(args, format);
+  vfprintf(pFile, format, args);
+  va_end(args);  
+  fclose(pFile);
+
+}
+//------------------------------------------------------
+
+
+
 /** @internal
  * @brief Event handler thread
  * There's one of these per UVC context.
@@ -102,10 +127,17 @@ void *_uvc_handle_events(void *arg) {
  * @return Error opening context or UVC_SUCCESS
  */
 uvc_error_t uvc_init(uvc_context_t **pctx, struct libusb_context *usb_ctx) {
+
+  dgnetP_init_c("uvc_init()\n")
+
+
   uvc_error_t ret = UVC_SUCCESS;
   uvc_context_t *ctx = calloc(1, sizeof(*ctx));
 
   if (usb_ctx == NULL) {
+
+    dgnetP_init_c("uvc_init: libusb_init()\n")
+
     ret = libusb_init(&ctx->usb_ctx);
     ctx->own_usb_ctx = 1;
     if (ret != UVC_SUCCESS) {

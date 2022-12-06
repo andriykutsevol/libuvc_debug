@@ -28,9 +28,6 @@ void dgnetP_example_c(char *format, ...);
 
 void dgnetP_example_c(char *format, ...){
 
-
-  printf("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
-
   FILE * pFile;
   pFile = fopen ("/home/dgnet/libusb/uvc_out.txt","a");
 
@@ -149,7 +146,7 @@ int main(int argc, char **argv) {
 
 
 
-  dgnetP_example_c("zzzzzzzzzzzzzzzzzzzzz\n");
+  //dgnetP_example_c("zzzzzzzzzzzzzzzzzzzzz\n");
 
 
   /* Initialize a UVC service context. Libuvc will set up its own libusb
