@@ -19,9 +19,6 @@ int fmt_index;
 int frame_index;
 
 
-
-
-
 /* This callback function runs once per frame. Use it to perform any
  * quick processing you need, or have it put the frame into your application's
  * input queue. If this function takes too long, you'll start losing frames. */
