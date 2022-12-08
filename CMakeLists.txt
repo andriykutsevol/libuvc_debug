@@ -144,9 +144,9 @@ foreach(target_name IN LISTS UVC_TARGETS)
 endforeach()
 
 if(BUILD_EXAMPLE)
-  add_executable(example src/example.c)
+  add_executable(example_1 src/example_1.c)
   find_package(Threads)
-  target_link_libraries(example
+  target_link_libraries(example_1
     PRIVATE
       LibUVC::UVC
       Threads::Threads
