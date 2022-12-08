@@ -153,6 +153,17 @@ if(BUILD_EXAMPLE)
   )
 endif()
 
+
+if(BUILD_EXAMPLE)
+  add_executable(example_2 src/example_2.c)
+  find_package(Threads)
+  target_link_libraries(example_2
+    PRIVATE
+      LibUVC::UVC
+      Threads::Threads
+  )
+endif()
+
 if(BUILD_TEST)
   # OpenCV defines targets with transitive dependencies not with namespaces but using opencv_ prefix. 
   # This targets provide necessary include directories and linked flags.
